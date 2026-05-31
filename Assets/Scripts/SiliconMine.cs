@@ -6,10 +6,11 @@ public class SiliconMine : MonoBehaviour
     [Header("Menedżerowie")]
     public TimeManager timeManager;
     public CorporationManager corporationManager;
+    public GlobalInventoryManager globalInventoryManager;
 
     [Header("Stan kopalni")]
     public bool isOperating = true;
-    public int siliconStorage = 0;
+    public int siliconStorage = 0; // Local counter for statistical purposes
 
     [Header("Koszty i produkcja")]
     public double baseHourlyEnergyConsumption = 40.00;
@@ -42,9 +43,9 @@ public class SiliconMine : MonoBehaviour
     {
         if (!isOperating) return;
 
-        if (timeManager == null || corporationManager == null)
+        if (timeManager == null || corporationManager == null || globalInventoryManager == null)
         {
-            Debug.LogWarning("[Kopalnia Krzemu] Brak referencji do TimeManager lub CorporationManager.");
+            Debug.LogWarning("[Kopalnia Krzemu] Brak referencji do TimeManager, CorporationManager lub GlobalInventoryManager.");
             return;
         }
 
@@ -58,7 +59,10 @@ public class SiliconMine : MonoBehaviour
         // Odjęcie kosztów
         corporationManager.cash -= totalHourlyCost;
 
-        // Dodanie krzemu do magazynu
+        // Przekazanie krzemu do magazynu głównego
+        globalInventoryManager.AddSilicon(baseHourlyProduction);
+
+        // Zaktualizowanie licznika statystycznego
         siliconStorage += baseHourlyProduction;
 
         // Aktualizacja widoku kopalni (np. jeśli się wyłączy z powodu braku pieniędzy w przyszłości)
@@ -66,7 +70,7 @@ public class SiliconMine : MonoBehaviour
 
         // Logowanie do konsoli
         Debug.Log($"<b>[Kopalnia Krzemu]</b> Produkcja w toku. Wyprodukowano: {baseHourlyProduction}t. " +
-                  $"Aktualny stan magazynu: {siliconStorage}t. " +
+                  $"Sumaryczna produkcja (statystyka): {siliconStorage}t. " +
                   $"Koszt godziny: {totalHourlyCost:F2} USD (Energia: {currentHourEnergyCost:F2} USD, Praca: {hourlyLaborCost:F2} USD).");
     }
 
