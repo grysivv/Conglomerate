@@ -272,6 +272,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
   timeManager: {fileID: 72461985}
   corporationManager: {fileID: 72461984}
+  siliconMine: {fileID: 72461987}
 --- !u!1 &1628392206
 GameObject:
   m_ObjectHideFlags: 0
