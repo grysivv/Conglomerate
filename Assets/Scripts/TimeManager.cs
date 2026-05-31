@@ -73,4 +73,19 @@ public class TimeManager : MonoBehaviour
         if (currentPhase == DayPhase.SZCZYT_PORANNY || currentPhase == DayPhase.SZCZYT_POPOŁUDNIOWY) return 3.0f;
         return 1.0f;
     }
+
+    public float GetMarketDemandMultiplier()
+    {
+        switch (currentPhase)
+        {
+            case DayPhase.NOC: return 0.05f;
+            case DayPhase.PORANEK: return 0.5f;
+            case DayPhase.SZCZYT_PORANNY: return 1.2f;
+            case DayPhase.GODZINY_PRACY: return 1.0f;
+            case DayPhase.SZCZYT_POPOŁUDNIOWY: return 2.5f;
+            case DayPhase.WIECZÓR: return 1.5f;
+            case DayPhase.WYGASZANIE: return 0.7f;
+            default: return 1.0f;
+        }
+    }
 }

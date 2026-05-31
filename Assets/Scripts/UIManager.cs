@@ -8,10 +8,12 @@ public class UIManager : MonoBehaviour
     public TimeManager timeManager;
     public CorporationManager corporationManager;
     public SiliconMine siliconMine; // Nowe powiązanie z kopalnią
+    public MarketManager marketManager;
 
     private Label timeLabel;
     private Label cashLabel;
     private Label siliconLabel; // Referencja do nowego napisu
+    private Label marketLabel;
 
     // Referencje do przycisków czasu
     private Button pauseBtn;
@@ -28,6 +30,7 @@ public class UIManager : MonoBehaviour
         timeLabel = root.Q<Label>("TimeLabel");
         cashLabel = root.Q<Label>("CashLabel");
         siliconLabel = root.Q<Label>("SiliconLabel"); // Odnalezienie nowego napisu po Name
+        marketLabel = root.Q<Label>("MarketLabel");
 
         // Wiązanie przycisków
         pauseBtn = root.Q<Button>("PauseBtn");
@@ -83,6 +86,12 @@ public class UIManager : MonoBehaviour
         if (siliconLabel != null && siliconMine != null)
         {
             siliconLabel.text = $"Magazyn Krzemu: {siliconMine.siliconStorage} t";
+        }
+
+        // 4. Aktualizacja rynku (jeśli rynek jest przypisany)
+        if (marketLabel != null && marketManager != null)
+        {
+            marketLabel.text = $"Cena Krzemu: {marketManager.currentSiliconPrice:N2} USD / t";
         }
     }
 }
