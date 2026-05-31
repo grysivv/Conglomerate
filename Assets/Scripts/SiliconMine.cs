@@ -16,6 +16,18 @@ public class SiliconMine : MonoBehaviour
     public double hourlyLaborCost = 200.00;
     public int baseHourlyProduction = 5;
 
+    private SpriteRenderer spriteRenderer;
+
+    void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    void Start()
+    {
+        UpdateMapVisuals();
+    }
+
     void OnEnable()
     {
         TimeManager.OnHourlyTick += HandleHourlyTick;
@@ -49,9 +61,20 @@ public class SiliconMine : MonoBehaviour
         // Dodanie krzemu do magazynu
         siliconStorage += baseHourlyProduction;
 
+        // Aktualizacja widoku kopalni (np. jeśli się wyłączy z powodu braku pieniędzy w przyszłości)
+        UpdateMapVisuals();
+
         // Logowanie do konsoli
         Debug.Log($"<b>[Kopalnia Krzemu]</b> Produkcja w toku. Wyprodukowano: {baseHourlyProduction}t. " +
                   $"Aktualny stan magazynu: {siliconStorage}t. " +
                   $"Koszt godziny: {totalHourlyCost:F2} USD (Energia: {currentHourEnergyCost:F2} USD, Praca: {hourlyLaborCost:F2} USD).");
+    }
+
+    public void UpdateMapVisuals()
+    {
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = isOperating ? Color.green : Color.red;
+        }
     }
 }
