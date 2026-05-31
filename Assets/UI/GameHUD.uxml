@@ -4,4 +4,5 @@
     <ui:Button text="PAUZA" name="PauseBtn"/>
     <ui:Button text="&gt; 1x" name="Speed1Btn"/>
     <ui:Button text="&gt;&gt;&gt; 3x" name="Speed3Btn"/>
+    <ui:Label text="Magazyn Krzemu: 0t" name="SiliconLabel"/>
 </ui:UXML>

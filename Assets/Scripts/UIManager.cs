@@ -3,18 +3,43 @@ using UnityEngine.UIElements;
 
 public class UIManager : MonoBehaviour
 {
+    [Header("Powiązania z menedżerami")]
     public TimeManager timeManager;
     public CorporationManager corporationManager;
+<<<<<<< Updated upstream
+=======
+    public SiliconMine siliconMine; // Nowe powiązanie z kopalnią
+
+>>>>>>> Stashed changes
     private Label timeLabel;
     private Label cashLabel;
+    private Label siliconLabel; // Referencja do nowego napisu
 
     void OnEnable()
     {
         UIDocument uiDocument = GetComponent<UIDocument>();
         if (uiDocument == null) return;
         VisualElement root = uiDocument.rootVisualElement;
+<<<<<<< Updated upstream
         timeLabel = root.Q<Label>("TimeLabel");
         cashLabel = root.Q<Label>("CashLabel");
+=======
+
+        // Wiązanie napisów z UI Buildera
+        timeLabel = root.Q<Label>("TimeLabel");
+        cashLabel = root.Q<Label>("CashLabel");
+        siliconLabel = root.Q<Label>("SiliconLabel"); // Odnalezienie nowego napisu po Name
+
+        // Wiązanie przycisków
+        pauseBtn = root.Q<Button>("PauseBtn");
+        speed1Btn = root.Q<Button>("Speed1Btn");
+        speed3Btn = root.Q<Button>("Speed3Btn");
+
+        if (pauseBtn != null) pauseBtn.clicked += () => timeManager.SetPause(true);
+        if (speed1Btn != null) speed1Btn.clicked += () => timeManager.SetSpeed(1.0f);
+        if (speed3Btn != null) speed3Btn.clicked += () => timeManager.SetSpeed(5.0f);
+
+>>>>>>> Stashed changes
         TimeManager.OnHourlyTick += RefreshHUD;
     }
 
@@ -24,7 +49,19 @@ public class UIManager : MonoBehaviour
     private void RefreshHUD()
     {
         if (timeManager == null || corporationManager == null) return;
-        if (timeLabel != null) timeLabel.text = $"Dzień: {timeManager.currentDay} | Zegar: {timeManager.currentHour:00}:00 ({timeManager.currentPhase})";
-        if (cashLabel != null) cashLabel.text = $"Fundusze: {corporationManager.cash:N2} USD";
+
+        // 1. Aktualizacja czasu
+        if (timeLabel != null)
+            timeLabel.text = $"Dzień: {timeManager.currentDay} | Zegar: {timeManager.currentHour:00}:00 ({timeManager.currentPhase})";
+
+        // 2. Aktualizacja finansów
+        if (cashLabel != null)
+            cashLabel.text = $"Fundusze: {corporationManager.cash:N2} USD";
+
+        // 3. Aktualizacja stanu magazynu krzemu (jeśli kopalnia jest przypisana)
+        if (siliconLabel != null && siliconMine != null)
+        {
+            siliconLabel.text = $"Magazyn Krzemu: {siliconMine.siliconStorage} t";
+        }
     }
 }
