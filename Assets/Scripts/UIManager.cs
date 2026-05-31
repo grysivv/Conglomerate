@@ -34,16 +34,35 @@ public class UIManager : MonoBehaviour
         speed1Btn = root.Q<Button>("Speed1Btn");
         speed3Btn = root.Q<Button>("Speed3Btn");
 
-        if (pauseBtn != null) pauseBtn.clicked += () => timeManager.SetPause(true);
-        if (speed1Btn != null) speed1Btn.clicked += () => timeManager.SetSpeed(1.0f);
-        if (speed3Btn != null) speed3Btn.clicked += () => timeManager.SetSpeed(5.0f);
+        if (pauseBtn != null) pauseBtn.clicked += OnPauseClicked;
+        if (speed1Btn != null) speed1Btn.clicked += OnSpeed1Clicked;
+        if (speed3Btn != null) speed3Btn.clicked += OnSpeed3Clicked;
 
         TimeManager.OnHourlyTick += RefreshHUD;
     }
 
     void OnDisable()
     {
+        if (pauseBtn != null) pauseBtn.clicked -= OnPauseClicked;
+        if (speed1Btn != null) speed1Btn.clicked -= OnSpeed1Clicked;
+        if (speed3Btn != null) speed3Btn.clicked -= OnSpeed3Clicked;
+
         TimeManager.OnHourlyTick -= RefreshHUD;
+    }
+
+    private void OnPauseClicked()
+    {
+        if (timeManager != null) timeManager.SetPause(true);
+    }
+
+    private void OnSpeed1Clicked()
+    {
+        if (timeManager != null) timeManager.SetSpeed(1.0f);
+    }
+
+    private void OnSpeed3Clicked()
+    {
+        if (timeManager != null) timeManager.SetSpeed(5.0f);
     }
 
     void Start() { RefreshHUD(); }
