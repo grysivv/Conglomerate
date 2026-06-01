@@ -1,46 +1,65 @@
 // MarketManager.cs
 using UnityEngine;
+using System.Collections.Generic;
 
 public class MarketManager : MonoBehaviour
 {
-    [Header("Menedżerowie")]
+    [System.Serializable]
+    public class ResourceBasePrice
+    {
+        public ResourceType type;
+        public double basePricePerTon;
+    }
+
+    [Header("Powiązania systemowe")]
     public TimeManager timeManager;
     public CorporationManager corporationManager;
-    // siliconMine isn't used for auto-purchasing anymore, but left here to match original variables if needed or could be removed.
-    // However the instructions say we don't buy from SiliconMine automatically. We can remove the logic.
 
-    [Header("Ustawienia Rynku")]
-    public double baseSiliconPricePerTon = 150.00;
-
-    public double currentSiliconPrice { get; private set; }
-
-    void OnEnable()
+    [Header("Cennik Bazowy Surowców")]
+    public List<ResourceBasePrice> basePrices = new List<ResourceBasePrice>()
     {
-        TimeManager.OnHourlyTick += HandleHourlyTick;
+        new ResourceBasePrice { type = ResourceType.Silicon, basePricePerTon = 150.00 },
+        new ResourceBasePrice { type = ResourceType.Coal, basePricePerTon = 45.00 },
+        new ResourceBasePrice { type = ResourceType.Microchip, basePricePerTon = 1200.00 } // Drogi produkt końcowy
+    };
+
+    private Dictionary<ResourceType, double> currentPrices = new Dictionary<ResourceType, double>();
+
+    private void Start()
+    {
+        CalculatePrices();
     }
 
-    void OnDisable()
+    private void OnEnable() { TimeManager.OnHourlyTick += HandleHourlyMarket; }
+    private void OnDisable() { TimeManager.OnHourlyTick -= HandleHourlyMarket; }
+
+    private void HandleHourlyMarket() { CalculatePrices(); }
+
+    public double GetCurrentPrice(ResourceType type)
     {
-        TimeManager.OnHourlyTick -= HandleHourlyTick;
+        return currentPrices.ContainsKey(type) ? currentPrices[type] : 0.0;
     }
 
-    private void HandleHourlyTick()
+    public void SellResourceFromDelivery(ResourceType type, int amount)
     {
-        if (timeManager == null || corporationManager == null) return;
+        if (corporationManager == null) return;
 
-        // Przeliczenie ceny
+        CalculatePrices();
+        double price = GetCurrentPrice(type);
+        double totalEarnings = amount * price;
+        corporationManager.cash += totalEarnings;
+
+        Debug.Log($"<b><color=#2e7d32>[RYNEK]</color></b> Sprzedano {amount}t/szt {type} za <b>{totalEarnings:F2} USD</b>");
+    }
+
+    private void CalculatePrices()
+    {
+        if (timeManager == null) return;
         float demandMultiplier = timeManager.GetMarketDemandMultiplier();
-        currentSiliconPrice = baseSiliconPricePerTon * demandMultiplier;
-    }
 
-    public void SellSiliconFromDelivery(int amount)
-    {
-        if (amount > 0)
+        foreach (var priceData in basePrices)
         {
-            double profit = amount * currentSiliconPrice;
-            corporationManager.cash += profit;
-
-            Debug.Log($"<b>[Rynek Zbytu]</b> Sprzedano z dostawy {amount}t krzemu za {profit:F2} USD (Cena za tonę: {currentSiliconPrice:F2} USD).");
+            currentPrices[priceData.type] = priceData.basePricePerTon * demandMultiplier;
         }
     }
 }

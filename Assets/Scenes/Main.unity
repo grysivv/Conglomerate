@@ -131,6 +131,10 @@ GameObject:
   - component: {fileID: 72461985}
   - component: {fileID: 72461984}
   - component: {fileID: 72461987}
+  - component: {fileID: 72461988}
+  - component: {fileID: 72461989}
+  - component: {fileID: 72461990}
+  - component: {fileID: 72461991}
   m_Layer: 0
   m_Name: _GameManager
   m_TagString: Untagged
@@ -151,6 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CorporationManager
   cash: 1000000
+  baseHQMaintenanceCost: 500
 --- !u!114 &72461985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -197,11 +202,100 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SiliconMine
   timeManager: {fileID: 72461985}
   corporationManager: {fileID: 72461984}
+  globalInventory: {fileID: 72461988}
+  resourceType: 0
+  hasPlotPurchased: 0
+  remainingDeposit: 0
   isOperating: 1
-  siliconStorage: 0
+  totalResourceProduced: 0
   baseHourlyEnergyConsumption: 40
   hourlyLaborCost: 200
   baseHourlyProduction: 5
+--- !u!114 &72461988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 72461983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 550752cbe5e96aa42a4452ccd310f1b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GlobalInventoryManager
+  storageLimits:
+  - type: 0
+    maxCapacity: 100
+  - type: 1
+    maxCapacity: 500
+--- !u!114 &72461989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 72461983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3938e61001b19564bab82adefa2d0b19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MarketManager
+  timeManager: {fileID: 72461985}
+  corporationManager: {fileID: 72461984}
+  basePrices:
+  - type: 0
+    basePricePerTon: 150
+  - type: 1
+    basePricePerTon: 45
+--- !u!114 &72461990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 72461983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60e0565562ac83946849e19f1eb7d768, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FleetManager
+  timeManager: {fileID: 72461985}
+  corporationManager: {fileID: 72461984}
+  globalInventory: {fileID: 72461988}
+  marketManager: {fileID: 72461989}
+  transportDurationHours: 3
+  truckCapacity: 20
+  fuelCostPerDelivery: 50
+  isEnRoute: 0
+  currentJourneyProgress: 0
+--- !u!114 &72461991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 72461983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed9cfc9962035f64a86f173f1eab7961, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MicrochipFactory
+  timeManager: {fileID: 72461985}
+  corporationManager: {fileID: 72461984}
+  globalInventory: {fileID: 72461988}
+  isBuilt: 1
+  isOperating: 1
+  currentWorkers: 0
+  maxWorkers: 5
+  currentSalary: 300
+  expectedSalary: 300
+  laborEfficiency: 0
+  siliconRequiredPerChip: 2
+  coalRequiredPerChip: 1
+  productionTimeHours: 4
+  baseHourlyMaintenanceCost: 200
+  isProducing: 0
+  currentProductionTimer: 1
 --- !u!1 &378419998
 GameObject:
   m_ObjectHideFlags: 0
@@ -272,7 +366,72 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
   timeManager: {fileID: 72461985}
   corporationManager: {fileID: 72461984}
+  globalInventory: {fileID: 72461988}
+  marketManager: {fileID: 72461989}
+  fleetManager: {fileID: 72461990}
+  microchipFactory: {fileID: 72461991}
   siliconMine: {fileID: 72461987}
+  coalMine: {fileID: 1206827556}
+  siliconPlotCost: 100000
+  siliconDepositAmount: 500
+  coalPlotCost: 50000
+  coalDepositAmount: 1500
+  factoryCost: 250000
+--- !u!1 &1206827555
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1206827557}
+  - component: {fileID: 1206827556}
+  m_Layer: 0
+  m_Name: _CoalMineObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1206827556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1206827555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3631c73726da7f41a45b098f9a64801, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SiliconMine
+  timeManager: {fileID: 72461985}
+  corporationManager: {fileID: 72461984}
+  globalInventory: {fileID: 72461988}
+  resourceType: 1
+  hasPlotPurchased: 0
+  remainingDeposit: 0
+  isOperating: 1
+  totalResourceProduced: 0
+  baseHourlyEnergyConsumption: 40
+  hourlyLaborCost: 100
+  baseHourlyProduction: 15
+--- !u!4 &1206827557
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1206827555}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.89752, y: 0.56556, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1628392206
 GameObject:
   m_ObjectHideFlags: 0
@@ -416,4 +575,5 @@ SceneRoots:
   m_Roots:
   - {fileID: 1628392210}
   - {fileID: 72461986}
+  - {fileID: 1206827557}
   - {fileID: 378420001}

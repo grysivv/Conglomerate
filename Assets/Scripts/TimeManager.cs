@@ -7,7 +7,7 @@ public enum DayPhase { NOC, PORANEK, SZCZYT_PORANNY, GODZINY_PRACY, SZCZYT_POPO�
 public class TimeManager : MonoBehaviour
 {
     [Header("Ustawienia Czasu")]
-    public float baseSecondsPerHour = 1.0f; // 1 sekunda realna = 1 godzina gry przy 1x
+    public float baseSecondsPerHour = 1.0f;
     public bool isPaused = false;
     private float currentSpeedMultiplier = 1.0f;
 
@@ -25,11 +25,10 @@ public class TimeManager : MonoBehaviour
     {
         if (isPaused) return;
 
-        // Licznik tyka szybciej, im wyższy jest mnożnik prędkości
         timer += Time.deltaTime * currentSpeedMultiplier;
-        while (timer >= baseSecondsPerHour)
+        if (timer >= baseSecondsPerHour)
         {
-            timer -= baseSecondsPerHour;
+            timer = 0f;
             ExecuteHourlyTick();
         }
     }
@@ -53,7 +52,6 @@ public class TimeManager : MonoBehaviour
         else currentPhase = DayPhase.WYGASZANIE;
     }
 
-    // Funkcje sterujące czasem wywoływane przez przyciski z UI
     public void SetPause(bool pauseStatus)
     {
         isPaused = pauseStatus;
@@ -67,6 +65,13 @@ public class TimeManager : MonoBehaviour
         Debug.Log($"<b>[ZEGAR]</b> Zmiana prędkości gry na: {newSpeed}x");
     }
 
+    // Nowa metoda dostępowa dla FleetManagera
+    public float GetCurrentSpeed()
+    {
+        if (isPaused) return 0f;
+        return currentSpeedMultiplier;
+    }
+
     public float GetEnergyCostMultiplier()
     {
         if (currentPhase == DayPhase.NOC) return 0.3f;
@@ -76,16 +81,12 @@ public class TimeManager : MonoBehaviour
 
     public float GetMarketDemandMultiplier()
     {
-        switch (currentPhase)
-        {
-            case DayPhase.NOC: return 0.05f;
-            case DayPhase.PORANEK: return 0.5f;
-            case DayPhase.SZCZYT_PORANNY: return 1.2f;
-            case DayPhase.GODZINY_PRACY: return 1.0f;
-            case DayPhase.SZCZYT_POPOŁUDNIOWY: return 2.5f;
-            case DayPhase.WIECZÓR: return 1.5f;
-            case DayPhase.WYGASZANIE: return 0.7f;
-            default: return 1.0f;
-        }
+        if (currentPhase == DayPhase.NOC) return 0.05f;
+        if (currentPhase == DayPhase.PORANEK) return 0.5f;
+        if (currentPhase == DayPhase.SZCZYT_PORANNY) return 1.2f;
+        if (currentPhase == DayPhase.GODZINY_PRACY) return 1.0f;
+        if (currentPhase == DayPhase.SZCZYT_POPOŁUDNIOWY) return 2.5f;
+        if (currentPhase == DayPhase.WIECZÓR) return 1.5f;
+        return 0.7f;
     }
 }
