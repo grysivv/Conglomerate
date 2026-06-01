@@ -6,7 +6,8 @@ public class MarketManager : MonoBehaviour
     [Header("Menedżerowie")]
     public TimeManager timeManager;
     public CorporationManager corporationManager;
-    public SiliconMine siliconMine;
+    // siliconMine isn't used for auto-purchasing anymore, but left here to match original variables if needed or could be removed.
+    // However the instructions say we don't buy from SiliconMine automatically. We can remove the logic.
 
     [Header("Ustawienia Rynku")]
     public double baseSiliconPricePerTon = 150.00;
@@ -25,22 +26,21 @@ public class MarketManager : MonoBehaviour
 
     private void HandleHourlyTick()
     {
-        if (timeManager == null || corporationManager == null || siliconMine == null) return;
+        if (timeManager == null || corporationManager == null) return;
 
         // Przeliczenie ceny
         float demandMultiplier = timeManager.GetMarketDemandMultiplier();
         currentSiliconPrice = baseSiliconPricePerTon * demandMultiplier;
+    }
 
-        // Pętla finansowa: skupowanie krzemu z kopalni
-        if (siliconMine.siliconStorage > 0)
+    public void SellSiliconFromDelivery(int amount)
+    {
+        if (amount > 0)
         {
-            int tonsSold = siliconMine.siliconStorage;
-            double profit = tonsSold * currentSiliconPrice;
+            double profit = amount * currentSiliconPrice;
+            corporationManager.cash += profit;
 
-            siliconMine.siliconStorage = 0; // Zerujemy magazyn
-            corporationManager.cash += profit; // Dodajemy gotówkę
-
-            Debug.Log($"<b>[Rynek Zbytu]</b> Sprzedano {tonsSold}t krzemu za {profit:F2} USD (Cena za tonę: {currentSiliconPrice:F2} USD).");
+            Debug.Log($"<b>[Rynek Zbytu]</b> Sprzedano z dostawy {amount}t krzemu za {profit:F2} USD (Cena za tonę: {currentSiliconPrice:F2} USD).");
         }
     }
 }

@@ -7,13 +7,15 @@ public class UIManager : MonoBehaviour
     [Header("Powiązania z menedżerami")]
     public TimeManager timeManager;
     public CorporationManager corporationManager;
-    public SiliconMine siliconMine; // Nowe powiązanie z kopalnią
+    public GlobalInventoryManager globalInventoryManager; // Zmieniono z siliconMine
     public MarketManager marketManager;
+    public FleetManager fleetManager; // Dodano FleetManager
 
     private Label timeLabel;
     private Label cashLabel;
-    private Label siliconLabel; // Referencja do nowego napisu
+    private Label siliconLabel;
     private Label marketLabel;
+    private Label truckLabel; // Nowy label dla ciężarówki
 
     // Referencje do przycisków czasu
     private Button pauseBtn;
@@ -29,8 +31,9 @@ public class UIManager : MonoBehaviour
         // Wiązanie napisów z UI Buildera
         timeLabel = root.Q<Label>("TimeLabel");
         cashLabel = root.Q<Label>("CashLabel");
-        siliconLabel = root.Q<Label>("SiliconLabel"); // Odnalezienie nowego napisu po Name
+        siliconLabel = root.Q<Label>("SiliconLabel");
         marketLabel = root.Q<Label>("MarketLabel");
+        truckLabel = root.Q<Label>("TruckLabel"); // Odnalezienie nowego napisu po Name, może go nie być
 
         // Wiązanie przycisków
         pauseBtn = root.Q<Button>("PauseBtn");
@@ -70,6 +73,28 @@ public class UIManager : MonoBehaviour
 
     void Start() { RefreshHUD(); }
 
+    void Update()
+    {
+        // Aktualizacja TruckLabel co klatkę by pokazać postęp procentowy w czasie rzeczywistym
+        if (truckLabel != null && fleetManager != null)
+        {
+            if (fleetManager.isEnRoute)
+            {
+                float realSecondsNeeded = fleetManager.transportDurationHours * (timeManager != null ? timeManager.baseSecondsPerHour : 1.0f);
+                float progress = 0f;
+                if (realSecondsNeeded > 0)
+                {
+                    progress = Mathf.Clamp01(fleetManager.currentJourneyTimer / realSecondsNeeded) * 100f;
+                }
+                truckLabel.text = $"Transport: W trasie ({progress:F0}%)";
+            }
+            else
+            {
+                truckLabel.text = "Transport: Oczekiwanie";
+            }
+        }
+    }
+
     private void RefreshHUD()
     {
         if (timeManager == null || corporationManager == null) return;
@@ -82,10 +107,10 @@ public class UIManager : MonoBehaviour
         if (cashLabel != null)
             cashLabel.text = $"Fundusze: {corporationManager.cash:N2} USD";
 
-        // 3. Aktualizacja stanu magazynu krzemu (jeśli kopalnia jest przypisana)
-        if (siliconLabel != null && siliconMine != null)
+        // 3. Aktualizacja stanu magazynu głównego
+        if (siliconLabel != null && globalInventoryManager != null)
         {
-            siliconLabel.text = $"Magazyn Krzemu: {siliconMine.siliconStorage} t";
+            siliconLabel.text = $"Magazyn Główny: {globalInventoryManager.siliconInStock} t";
         }
 
         // 4. Aktualizacja rynku (jeśli rynek jest przypisany)
