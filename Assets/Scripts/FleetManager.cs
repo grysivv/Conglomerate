@@ -1,4 +1,3 @@
-// FleetManager.cs
 using UnityEngine;
 using System.Reflection;
 
@@ -15,15 +14,17 @@ public class FleetManager : MonoBehaviour
     public int truckCapacity = 20;
     public double fuelCostPerDelivery = 50.00;
 
+    [Header("Punkty Trasy")]
+    public Transform startPoint;
+    public Transform endPoint;
+
     [Header("Stan Ciężarówki")]
     public bool isEnRoute = false;
     public int currentLoad = 0;
     public float currentJourneyTimer = 0f;
 
-    private Vector3 startPos = new Vector3(-3, 0, 0);
-    private Vector3 endPos = new Vector3(3, 0, 0);
-
     private SpriteRenderer spriteRenderer;
+    private FieldInfo speedMultiplierField;
 
     void Awake()
     {
@@ -32,14 +33,16 @@ public class FleetManager : MonoBehaviour
         {
             spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
         }
-        // Wymagane w poleceniu: trójkąt/kwadrat, żółty kolor - gracz ustawi to sobie w edytorze,
-        // my tylko wymuszamy domyślny kolor jakby co.
         spriteRenderer.color = Color.yellow;
+        speedMultiplierField = typeof(TimeManager).GetField("currentSpeedMultiplier", BindingFlags.NonPublic | BindingFlags.Instance);
     }
 
     void Start()
     {
-        transform.position = startPos;
+        if (startPoint != null)
+        {
+            transform.position = startPoint.position;
+        }
     }
 
     void OnEnable()
@@ -58,7 +61,7 @@ public class FleetManager : MonoBehaviour
 
         if (!isEnRoute)
         {
-            // Oczekujemy minimum 5 ton, by wyruszyć w trasę (wymóg z polecenia)
+            // Oczekujemy minimum 5 ton, by wyruszyć w trasę
             if (globalInventoryManager.siliconInStock >= 5)
             {
                 int amountToLoad = Mathf.Min(globalInventoryManager.siliconInStock, truckCapacity);
@@ -78,35 +81,28 @@ public class FleetManager : MonoBehaviour
 
     void Update()
     {
-        if (timeManager == null || timeManager.isPaused) return;
+        if (timeManager == null || timeManager.isPaused || startPoint == null || endPoint == null) return;
 
         if (isEnRoute)
         {
-            // Pobranie prywatnego currentSpeedMultiplier przez refleksję, ponieważ TimeManager
-            // nie został zmodyfikowany pod kątem publicznego dostępu do tej zmiennej.
+            // Pobranie currentSpeedMultiplier przez refleksję, by uwzględnić przyspieszenie gry
             float speedMultiplier = 1.0f;
-            FieldInfo field = typeof(TimeManager).GetField("currentSpeedMultiplier", BindingFlags.NonPublic | BindingFlags.Instance);
-            if (field != null)
+            if (speedMultiplierField != null)
             {
-                speedMultiplier = (float)field.GetValue(timeManager);
+                speedMultiplier = (float)speedMultiplierField.GetValue(timeManager);
             }
 
             // Prędkość poruszania zsynchronizowana z czasem wirtualnym
-            // baseSecondsPerHour = 1 realna sekunda (przy 1x) to 1 godzina gry.
-            // transportDurationHours = 3.0f oznacza, że transport ma trwać 3 wirtualne godziny.
-            // W realnym czasie przy prędkości 1x powinno to zająć (3.0 * baseSecondsPerHour) sekund.
-            // Zatem w każdej klatce przyrost wynosi:
             float realSecondsNeeded = transportDurationHours * timeManager.baseSecondsPerHour;
 
-            // Ponieważ timer odmierza się w realnych sekundach (właściwie to w zsynchronizowanych sekundach),
-            // doliczamy czas, uwzględniając przyspieszenie gry.
+            // Zwiększanie czasu podróży z uwzględnieniem przyspieszenia
             currentJourneyTimer += Time.deltaTime * speedMultiplier;
 
-            // Obliczenie procentu podróży
+            // Obliczenie postępu podróży
             float journeyProgress = Mathf.Clamp01(currentJourneyTimer / realSecondsNeeded);
 
-            // Przesunięcie wizualne
-            transform.position = Vector3.Lerp(startPos, endPos, journeyProgress);
+            // Przesunięcie wizualne (lerp)
+            transform.position = Vector3.Lerp(startPoint.position, endPoint.position, journeyProgress);
 
             // Zakończenie podróży
             if (journeyProgress >= 1.0f)
@@ -119,7 +115,7 @@ public class FleetManager : MonoBehaviour
                 currentLoad = 0;
                 isEnRoute = false;
                 currentJourneyTimer = 0f;
-                transform.position = startPos;
+                transform.position = startPoint.position; // natychmiastowy powrót na start
 
                 Debug.Log("<b>[Logistyka]</b> Ciężarówka dotarła na rynek, rozładowała towar i powróciła do magazynu.");
             }

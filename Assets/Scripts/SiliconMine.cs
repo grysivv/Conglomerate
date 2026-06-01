@@ -1,4 +1,3 @@
-// SiliconMine.cs
 using UnityEngine;
 
 public class SiliconMine : MonoBehaviour
@@ -10,7 +9,7 @@ public class SiliconMine : MonoBehaviour
 
     [Header("Stan kopalni")]
     public bool isOperating = true;
-    public int siliconStorage = 0; // Local counter for statistical purposes
+    public int totalSiliconProduced = 0; // Local counter for statistical purposes
 
     [Header("Koszty i produkcja")]
     public double baseHourlyEnergyConsumption = 40.00;
@@ -59,18 +58,18 @@ public class SiliconMine : MonoBehaviour
         // Odjęcie kosztów
         corporationManager.cash -= totalHourlyCost;
 
-        // Przekazanie krzemu do magazynu głównego
+        // Przekazanie krzemu natychmiast do magazynu głównego
         globalInventoryManager.AddSilicon(baseHourlyProduction);
 
         // Zaktualizowanie licznika statystycznego
-        siliconStorage += baseHourlyProduction;
+        totalSiliconProduced += baseHourlyProduction;
 
-        // Aktualizacja widoku kopalni (np. jeśli się wyłączy z powodu braku pieniędzy w przyszłości)
+        // Aktualizacja widoku kopalni
         UpdateMapVisuals();
 
         // Logowanie do konsoli
-        Debug.Log($"<b>[Kopalnia Krzemu]</b> Produkcja w toku. Wyprodukowano: {baseHourlyProduction}t. " +
-                  $"Sumaryczna produkcja (statystyka): {siliconStorage}t. " +
+        Debug.Log($"<b>[Kopalnia Krzemu]</b> Produkcja w toku. Wyprodukowano: {baseHourlyProduction}t i przekazano do magazynu. " +
+                  $"Sumaryczna produkcja (statystyka): {totalSiliconProduced}t. " +
                   $"Koszt godziny: {totalHourlyCost:F2} USD (Energia: {currentHourEnergyCost:F2} USD, Praca: {hourlyLaborCost:F2} USD).");
     }
 

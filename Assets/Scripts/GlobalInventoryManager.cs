@@ -1,4 +1,3 @@
-// GlobalInventoryManager.cs
 using UnityEngine;
 
 public class GlobalInventoryManager : MonoBehaviour

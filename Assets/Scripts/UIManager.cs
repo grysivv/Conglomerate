@@ -1,4 +1,3 @@
-// UIManager.cs
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -7,15 +6,15 @@ public class UIManager : MonoBehaviour
     [Header("Powiązania z menedżerami")]
     public TimeManager timeManager;
     public CorporationManager corporationManager;
-    public GlobalInventoryManager globalInventoryManager; // Zmieniono z siliconMine
+    public GlobalInventoryManager globalInventoryManager;
     public MarketManager marketManager;
-    public FleetManager fleetManager; // Dodano FleetManager
+    public FleetManager fleetManager;
 
     private Label timeLabel;
     private Label cashLabel;
     private Label siliconLabel;
     private Label marketLabel;
-    private Label truckLabel; // Nowy label dla ciężarówki
+    private Label truckLabel;
 
     // Referencje do przycisków czasu
     private Button pauseBtn;
@@ -33,7 +32,7 @@ public class UIManager : MonoBehaviour
         cashLabel = root.Q<Label>("CashLabel");
         siliconLabel = root.Q<Label>("SiliconLabel");
         marketLabel = root.Q<Label>("MarketLabel");
-        truckLabel = root.Q<Label>("TruckLabel"); // Odnalezienie nowego napisu po Name, może go nie być
+        truckLabel = root.Q<Label>("TruckLabel");
 
         // Wiązanie przycisków
         pauseBtn = root.Q<Button>("PauseBtn");

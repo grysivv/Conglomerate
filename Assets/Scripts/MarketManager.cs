@@ -1,4 +1,3 @@
-// MarketManager.cs
 using UnityEngine;
 
 public class MarketManager : MonoBehaviour
@@ -6,8 +5,6 @@ public class MarketManager : MonoBehaviour
     [Header("Menedżerowie")]
     public TimeManager timeManager;
     public CorporationManager corporationManager;
-    // siliconMine isn't used for auto-purchasing anymore, but left here to match original variables if needed or could be removed.
-    // However the instructions say we don't buy from SiliconMine automatically. We can remove the logic.
 
     [Header("Ustawienia Rynku")]
     public double baseSiliconPricePerTon = 150.00;
@@ -35,7 +32,7 @@ public class MarketManager : MonoBehaviour
 
     public void SellSiliconFromDelivery(int amount)
     {
-        if (amount > 0)
+        if (amount > 0 && corporationManager != null)
         {
             double profit = amount * currentSiliconPrice;
             corporationManager.cash += profit;
