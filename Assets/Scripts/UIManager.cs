@@ -89,10 +89,10 @@ public class UIManager : MonoBehaviour
         navFactoryBtn = root.Q<Button>("NavFactoryBtn");
         globalBackBtn = root.Q<Button>("GlobalBackBtn");
 
-        if (navDashboardBtn != null) navDashboardBtn.clicked += () => SwitchScreen(ScreenType.Dashboard);
-        if (navMarketBtn != null) navMarketBtn.clicked += () => SwitchScreen(ScreenType.Market);
-        if (navFactoryBtn != null) navFactoryBtn.clicked += () => SwitchScreen(ScreenType.Factory);
-        if (globalBackBtn != null) globalBackBtn.clicked += () => SwitchScreen(ScreenType.Dashboard);
+        if (navDashboardBtn != null) navDashboardBtn.clicked += HandleNavDashboardClick;
+        if (navMarketBtn != null) navMarketBtn.clicked += HandleNavMarketClick;
+        if (navFactoryBtn != null) navFactoryBtn.clicked += HandleNavFactoryClick;
+        if (globalBackBtn != null) globalBackBtn.clicked += HandleNavDashboardClick;
 
         // 3. POWIĄZANIE RESZTY ELEMENTÓW HUD
         timeLabel = root.Q<Label>("TimeLabel");
@@ -124,18 +124,18 @@ public class UIManager : MonoBehaviour
         raiseFactoryWageBtn = root.Q<Button>("RaiseFactoryWageBtn");
         lowerFactoryWageBtn = root.Q<Button>("LowerFactoryWageBtn");
 
-        if (hireFactoryBtn != null) hireFactoryBtn.clicked += () => { if (microchipFactory) microchipFactory.HireWorker(); RefreshHUD(); };
-        if (fireFactoryBtn != null) fireFactoryBtn.clicked += () => { if (microchipFactory) microchipFactory.FireWorker(); RefreshHUD(); };
-        if (raiseFactoryWageBtn != null) raiseFactoryWageBtn.clicked += () => { if (microchipFactory) microchipFactory.AdjustWage(10); RefreshHUD(); };
-        if (lowerFactoryWageBtn != null) lowerFactoryWageBtn.clicked += () => { if (microchipFactory) microchipFactory.AdjustWage(-10); RefreshHUD(); };
+        if (hireFactoryBtn != null) hireFactoryBtn.clicked += HandleHireFactoryWorker;
+        if (fireFactoryBtn != null) fireFactoryBtn.clicked += HandleFireFactoryWorker;
+        if (raiseFactoryWageBtn != null) raiseFactoryWageBtn.clicked += HandleRaiseFactoryWage;
+        if (lowerFactoryWageBtn != null) lowerFactoryWageBtn.clicked += HandleLowerFactoryWage;
 
         pauseBtn = root.Q<Button>("PauseBtn");
         speed1Btn = root.Q<Button>("Speed1Btn");
         speed3Btn = root.Q<Button>("Speed3Btn");
 
-        if (pauseBtn != null) pauseBtn.clicked += () => timeManager.SetPause(true);
-        if (speed1Btn != null) speed1Btn.clicked += () => timeManager.SetSpeed(1.0f);
-        if (speed3Btn != null) speed3Btn.clicked += () => timeManager.SetSpeed(5.0f);
+        if (pauseBtn != null) pauseBtn.clicked += HandlePauseClick;
+        if (speed1Btn != null) speed1Btn.clicked += HandleSpeed1Click;
+        if (speed3Btn != null) speed3Btn.clicked += HandleSpeed3Click;
 
         TimeManager.OnHourlyTick += RefreshHUD;
 
@@ -145,10 +145,39 @@ public class UIManager : MonoBehaviour
     void OnDisable()
     {
         TimeManager.OnHourlyTick -= RefreshHUD;
+
+        if (navDashboardBtn != null) navDashboardBtn.clicked -= HandleNavDashboardClick;
+        if (navMarketBtn != null) navMarketBtn.clicked -= HandleNavMarketClick;
+        if (navFactoryBtn != null) navFactoryBtn.clicked -= HandleNavFactoryClick;
+        if (globalBackBtn != null) globalBackBtn.clicked -= HandleNavDashboardClick;
+
         if (buySiliconPlotBtn != null) buySiliconPlotBtn.clicked -= HandleBuySiliconPlot;
         if (buyCoalPlotBtn != null) buyCoalPlotBtn.clicked -= HandleBuyCoalPlot;
         if (buyFactoryBtn != null) buyFactoryBtn.clicked -= HandleBuyFactory;
+
+        if (hireFactoryBtn != null) hireFactoryBtn.clicked -= HandleHireFactoryWorker;
+        if (fireFactoryBtn != null) fireFactoryBtn.clicked -= HandleFireFactoryWorker;
+        if (raiseFactoryWageBtn != null) raiseFactoryWageBtn.clicked -= HandleRaiseFactoryWage;
+        if (lowerFactoryWageBtn != null) lowerFactoryWageBtn.clicked -= HandleLowerFactoryWage;
+
+        if (pauseBtn != null) pauseBtn.clicked -= HandlePauseClick;
+        if (speed1Btn != null) speed1Btn.clicked -= HandleSpeed1Click;
+        if (speed3Btn != null) speed3Btn.clicked -= HandleSpeed3Click;
     }
+
+    // --- METODY OBSŁUGI ZDARZEŃ UI ---
+    private void HandleNavDashboardClick() => SwitchScreen(ScreenType.Dashboard);
+    private void HandleNavMarketClick() => SwitchScreen(ScreenType.Market);
+    private void HandleNavFactoryClick() => SwitchScreen(ScreenType.Factory);
+
+    private void HandleHireFactoryWorker() { if (microchipFactory) microchipFactory.HireWorker(); RefreshHUD(); }
+    private void HandleFireFactoryWorker() { if (microchipFactory) microchipFactory.FireWorker(); RefreshHUD(); }
+    private void HandleRaiseFactoryWage() { if (microchipFactory) microchipFactory.AdjustWage(10); RefreshHUD(); }
+    private void HandleLowerFactoryWage() { if (microchipFactory) microchipFactory.AdjustWage(-10); RefreshHUD(); }
+
+    private void HandlePauseClick() => timeManager.SetPause(true);
+    private void HandleSpeed1Click() => timeManager.SetSpeed(1.0f);
+    private void HandleSpeed3Click() => timeManager.SetSpeed(5.0f);
 
     void Start() { RefreshHUD(); }
 
