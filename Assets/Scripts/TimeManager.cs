@@ -26,9 +26,9 @@ public class TimeManager : MonoBehaviour
         if (isPaused) return;
 
         timer += Time.deltaTime * currentSpeedMultiplier;
-        if (timer >= baseSecondsPerHour)
+        while (timer >= baseSecondsPerHour)
         {
-            timer = 0f;
+            timer -= baseSecondsPerHour;
             ExecuteHourlyTick();
         }
     }
