@@ -331,7 +331,7 @@ public class UIManager : MonoBehaviour
                 }
                 else if (microchipFactory.isProducing)
                 {
-                    factoryStatusLabel.text = $"Fabryka: Produkcja ({microchipFactory.currentProductionTimer}/{microchipFactory.productionTimeHours}h)";
+                    factoryStatusLabel.text = $"Fabryka: Produkcja ({microchipFactory.currentProductionTimer}/{microchipFactory.recipe.productionTimeHours}h)";
                 }
                 else
                 {
