@@ -3,5 +3,6 @@ public enum ResourceType
 {
     Silicon,
     Coal,
-    Microchip
+    Microchip,
+    Fuel
 }
