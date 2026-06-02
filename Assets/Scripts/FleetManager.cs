@@ -1,5 +1,6 @@
 // FleetManager.cs
 using UnityEngine;
+using System.Collections.Generic;
 
 public class FleetManager : MonoBehaviour
 {
@@ -9,70 +10,112 @@ public class FleetManager : MonoBehaviour
     public GlobalInventoryManager globalInventory;
     public MarketManager marketManager;
 
-    [Header("Ustawienia Logistyki")]
-    public float transportDurationHours = 3.0f;
-    public int truckCapacity = 20;
-    public double fuelCostPerDelivery = 50.00;
+    [Header("Trasy Transportowe")]
+    public List<TransportRoute> activeRoutes = new List<TransportRoute>();
 
-    [HideInInspector] public bool isEnRoute = false;
-    [HideInInspector] public float currentJourneyProgress = 0f;
-
-    private int currentLoad = 0;
-    private ResourceType currentLoadedType;
+    // For backwards compatibility and tests, keeping these as defaults or optional fallbacks
+    [Header("Ustawienia Domyślne")]
+    public float defaultTransportDurationHours = 3.0f;
+    public int defaultTruckCapacity = 20;
+    public double defaultFuelCostPerDelivery = 50.00;
 
     void OnEnable() { TimeManager.OnHourlyTick += CheckForDelivery; }
     void OnDisable() { TimeManager.OnHourlyTick -= CheckForDelivery; }
 
     void Update()
     {
-        if (!isEnRoute || timeManager == null) return;
-
+        if (timeManager == null) return;
         float timeScale = timeManager.GetCurrentSpeed();
         if (timeScale <= 0) return;
 
-        float realSecondsRequired = transportDurationHours * (1.0f / timeScale);
-        currentJourneyProgress += Time.deltaTime / realSecondsRequired;
-
-        if (currentJourneyProgress >= 1f)
+        foreach (var route in activeRoutes)
         {
-            if (marketManager != null)
-            {
-                marketManager.SellResourceFromDelivery(currentLoadedType, currentLoad);
-            }
+            if (!route.isEnRoute) continue;
 
-            currentLoad = 0;
-            currentJourneyProgress = 0f;
-            isEnRoute = false;
+            float realSecondsRequired = route.transportDurationHours * (1.0f / timeScale);
+            route.currentJourneyProgress += Time.deltaTime / realSecondsRequired;
+
+            if (route.currentJourneyProgress >= 1f)
+            {
+                DeliverCargo(route);
+            }
         }
+    }
+
+    private void DeliverCargo(TransportRoute route)
+    {
+        if (route.destinationType == DestinationType.Market && marketManager != null)
+        {
+            marketManager.SellResourceFromDelivery(route.resourceType, route.currentLoad);
+        }
+        else if (route.destinationType == DestinationType.GlobalInventory && globalInventory != null)
+        {
+            globalInventory.AddResource(route.resourceType, route.currentLoad);
+        }
+        else if (route.destinationType == DestinationType.Factory && route.destinationBuilding != null)
+        {
+            route.destinationBuilding.AddLocalResource(route.resourceType, route.currentLoad);
+        }
+
+        Debug.Log($"<b><color=#fbc02d>[LOGISTYKA]</color></b> Dostawa ukończona! {route.currentLoad}x {route.resourceType} do {route.destinationType}.");
+
+        route.currentLoad = 0;
+        route.currentJourneyProgress = 0f;
+        route.isEnRoute = false;
     }
 
     private void CheckForDelivery()
     {
-        if (isEnRoute || globalInventory == null || corporationManager == null) return;
+        if (corporationManager == null) return;
 
-        // Tablica priorytetów wysyłki: Najpierw drogie Chipy, potem Krzem, na końcu Tani Węgiel
-        ResourceType[] deliveryPriority = new ResourceType[] { ResourceType.Microchip, ResourceType.Silicon, ResourceType.Coal };
-
-        foreach (ResourceType type in deliveryPriority)
+        foreach (var route in activeRoutes)
         {
-            int availableStock = globalInventory.GetStock(type);
+            if (route.isEnRoute) continue;
 
-            // Bezpiecznik: Dla drogich procesorów wysyłamy ciężarówkę nawet po 1 sztukę, nie czekamy na 5!
-            int minBatch = (type == ResourceType.Microchip) ? 1 : 5;
+            int availableStock = 0;
+
+            if (route.sourceBuilding != null)
+            {
+                availableStock = route.sourceBuilding.GetLocalStock(route.resourceType);
+            }
+            else if (globalInventory != null)
+            {
+                availableStock = globalInventory.GetStock(route.resourceType);
+            }
+
+            int minBatch = (route.resourceType == ResourceType.Microchip) ? 1 : 5;
 
             if (availableStock >= minBatch)
             {
-                int amountToLoad = Mathf.Min(truckCapacity, availableStock);
-
-                if (globalInventory.RemoveResource(type, amountToLoad))
+                // Check if destination has space, unless it's market
+                if (route.destinationType == DestinationType.Factory && route.destinationBuilding != null)
                 {
-                    currentLoadedType = type;
-                    currentLoad = amountToLoad;
-                    corporationManager.cash -= fuelCostPerDelivery;
-                    isEnRoute = true;
-                    currentJourneyProgress = 0f;
-                    Debug.Log($"<b><color=#fbc02d>[LOGISTYKA]</color></b> Ciężarówka ruszyła! Dostawa priorytetowa: {currentLoad}x {currentLoadedType}.");
-                    break;
+                    if (route.destinationBuilding.GetLocalFreeSpace(route.resourceType) <= 0) continue; // no space
+                }
+                else if (route.destinationType == DestinationType.GlobalInventory && globalInventory != null)
+                {
+                    if (globalInventory.GetFreeSpace(route.resourceType) <= 0) continue; // no space
+                }
+
+                int amountToLoad = Mathf.Min(route.batchSize, availableStock);
+
+                bool loaded = false;
+                if (route.sourceBuilding != null)
+                {
+                    loaded = route.sourceBuilding.RemoveLocalResource(route.resourceType, amountToLoad);
+                }
+                else if (globalInventory != null)
+                {
+                    loaded = globalInventory.RemoveResource(route.resourceType, amountToLoad);
+                }
+
+                if (loaded)
+                {
+                    route.currentLoad = amountToLoad;
+                    corporationManager.cash -= route.fuelCostPerDelivery;
+                    route.isEnRoute = true;
+                    route.currentJourneyProgress = 0f;
+                    Debug.Log($"<b><color=#fbc02d>[LOGISTYKA]</color></b> Ciężarówka ruszyła! Dostawa na trasie. Ładunek: {route.currentLoad}x {route.resourceType}.");
                 }
             }
         }
