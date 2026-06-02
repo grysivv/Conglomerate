@@ -1,30 +1,97 @@
-<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:Button text="&lt;- Wróć do Pulpitu" name="GlobalBackBtn" style="position: absolute; top: 61px; left: 0;"/>
-    <ui:Button text="&gt;&gt;&gt; 3x" name="Speed3Btn" style="position: absolute; top: 3px; left: 617px; height: 23px; width: 46px; font-size: 5px;"/>
-    <ui:Button text="&gt; 1x" name="Speed1Btn" style="height: 22px; width: 51px; position: absolute; top: 4px; left: 562px; font-size: 5px;"/>
-    <ui:Button text="PAUZA" name="PauseBtn" style="width: 41px; position: absolute; top: 4px; left: 519px; font-size: 5px; height: 22px;"/>
-    <ui:VisualElement name="ScreenDashboard" style="flex-grow: 1; width: 1920px; flex-basis: 0; height: 1080px;">
-        <ui:Label text="Dzień: 1 | Zegar: 00:00" name="TimeLabel" style="height: 21px; width: 131px; font-size: 10px; position: absolute; -unity-font-style: bold; -unity-text-align: upper-left; background-color: rgb(149, 149, 149); top: 253px; left: 227px;"/>
-        <ui:Label text="Fundusze: 1,000,000.00 USD" name="CashLabel" style="height: 21px; width: 76px; position: absolute; top: 5px; left: 378px; font-size: 9px;"/>
-        <ui:Label text="Złoże: Kup działkę" name="SiliconDepositLabel" style="position: absolute; top: 96px; left: 8px; font-size: 12px;"/>
-        <ui:Label text="Złoże Węgla: Kup działkę" name="CoalDepositLabel" style="position: absolute; font-size: 12px; top: 117px; left: 171px;"/>
-        <ui:Button text="Kup Działkę Węgla (50 000 USD)" name="BuyCoalPlotBtn" emoji-fallback-support="true" double-click-selects-word="false" style="height: 24px; width: 120px; font-size: 7.5px; -unity-font-style: bold; position: absolute; top: 150px; left: 174px;"/>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="MainContainer" style="flex-grow: 1; background-color: rgb(35, 35, 35); color: rgb(240, 240, 240); padding: 15px; font-size: 16px;">
+        
+        <!-- PASEK GÓRNY (GLOBALNY) -->
+        <ui:VisualElement style="flex-direction: row; justify-content: space-between; margin-bottom: 20px; border-bottom-width: 1px; border-bottom-color: rgb(80, 80, 80); padding-bottom: 10px;">
+            <ui:Label name="TimeLabel" text="Dzień: 1 | Zegar: 08:00 (Poranek)" style="-unity-font-style: bold;" />
+            <ui:Label name="TruckLabel" text="Transport: Oczekiwanie w bazie" style="-unity-font-style: italic; color: rgb(200, 200, 200);" />
+            <ui:Label name="CashLabel" text="Fundusze: 1 000 000.00 USD" style="-unity-font-style: bold; color: rgb(133, 187, 101);" />
+        </ui:VisualElement>
+
+        <!-- MENU NAWIGACJI -->
+        <ui:VisualElement style="flex-direction: row; margin-bottom: 20px;">
+            <ui:Button name="NavDashboardBtn" text="Pulpit Główny" style="margin-right: 10px; padding: 10px 20px; background-color: rgb(60, 60, 60);" />
+            <ui:Button name="NavMarketBtn" text="Rynek i Logistyka" style="margin-right: 10px; padding: 10px 20px; background-color: rgb(60, 60, 60);" />
+            <ui:Button name="NavFactoryBtn" text="Fabryka nr 1 (Przetwórstwo)" style="padding: 10px 20px; background-color: rgb(60, 60, 60);" />
+        </ui:VisualElement>
+
+        <!-- KONTENERY EKRANÓW -->
+        <ui:VisualElement style="flex-grow: 1;">
+            
+            <!-- EKRAN 1: PULPIT -->
+            <ui:VisualElement name="ScreenDashboard" style="flex-grow: 1; display: flex;">
+                <ui:Label text="ZARZĄDZANIE KOPALNIAMI" style="font-size: 20px; -unity-font-style: bold; margin-bottom: 15px; color: rgb(200, 200, 255);" />
+                
+                <ui:VisualElement style="background-color: rgb(45, 45, 45); padding: 15px; margin-bottom: 10px;">
+                    <ui:Label name="SiliconDepositLabel" text="Złoże Krzemu: Brak dostępu" style="margin-bottom: 10px;" />
+                    <ui:Button name="BuySiliconPlotBtn" text="Kup Działkę Krzemu (100 000 USD)" style="width: 300px; padding: 10px;" />
+                </ui:VisualElement>
+
+                <ui:VisualElement style="background-color: rgb(45, 45, 45); padding: 15px;">
+                    <ui:Label name="CoalDepositLabel" text="Złoże Węgla: Brak dostępu" style="margin-bottom: 10px;" />
+                    <ui:Button name="BuyCoalPlotBtn" text="Kup Działkę Węgla (50 000 USD)" style="width: 300px; padding: 10px;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- EKRAN 2: RYNEK -->
+            <ui:VisualElement name="ScreenMarket" style="flex-grow: 1; display: none;">
+                <ui:VisualElement style="flex-direction: row;">
+                    <!-- Sekcja Magazynów -->
+                    <ui:VisualElement style="flex-grow: 1; background-color: rgb(45, 45, 45); padding: 15px; margin-right: 10px;">
+                        <ui:Label text="STAN MAGAZYNÓW" style="font-size: 18px; -unity-font-style: bold; margin-bottom: 10px;" />
+                        <ui:Label name="SiliconLabel" text="Silos Krzemu: 0 / 100 t" style="margin-bottom: 5px;" />
+                        <ui:Label name="CoalLabel" text="Hałda Węgla: 0 / 500 t" style="margin-bottom: 5px;" />
+                        <ui:Label name="MicrochipLabel" text="Magazyn Procesorów: 0 / 50 szt." />
+                    </ui:VisualElement>
+
+                    <!-- Sekcja Giełdy -->
+                    <ui:VisualElement style="flex-grow: 1; background-color: rgb(45, 45, 45); padding: 15px;">
+                        <ui:Label text="CENY RYNKOWE" style="font-size: 18px; -unity-font-style: bold; margin-bottom: 10px;" />
+                        <ui:Label name="SiliconMarketLabel" text="Cena Krzemu: --- USD" style="margin-bottom: 5px;" />
+                        <ui:Label name="CoalMarketLabel" text="Cena Węgla: --- USD" style="margin-bottom: 5px;" />
+                        <ui:Label name="MicrochipMarketLabel" text="Cena Procesorów: --- USD" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- EKRAN 3: FABRYKA I HR -->
+            <ui:VisualElement name="ScreenFactory" style="flex-grow: 1; display: none;">
+                <ui:Label text="FABRYKA PROCESORÓW" style="font-size: 20px; -unity-font-style: bold; margin-bottom: 15px; color: rgb(255, 200, 200);" />
+                
+                <ui:VisualElement style="background-color: rgb(45, 45, 45); padding: 15px; margin-bottom: 15px;">
+                    <ui:Label name="FactoryStatusLabel" text="Status: Nie wybudowano" style="margin-bottom: 10px;" />
+                    <ui:Button name="BuyFactoryBtn" text="Wybuduj Fabrykę Procesorów (250 000 USD)" style="width: 350px; padding: 10px;" />
+                </ui:VisualElement>
+
+                <!-- Panel HR -->
+                <ui:VisualElement style="background-color: rgb(55, 45, 55); padding: 15px; border-width: 1px; border-color: rgb(100, 60, 100);">
+                    <ui:Label text="DZIAŁ KADR (HR) - Inżynierowie" style="font-size: 18px; -unity-font-style: bold; margin-bottom: 15px;" />
+                    
+                    <ui:Label name="FactoryHRLabel" text="Zatrudnienie: 0 / 5 | Efektywność: 0%" style="margin-bottom: 10px;" />
+                    <ui:VisualElement style="flex-direction: row; margin-bottom: 15px;">
+                        <ui:Button name="HireFactoryBtn" text="Zatrudnij (+1)" style="padding: 8px 15px; margin-right: 10px; background-color: rgb(60, 90, 60);" />
+                        <ui:Button name="FireFactoryBtn" text="Zwolnij (-1)" style="padding: 8px 15px; background-color: rgb(90, 60, 60);" />
+                    </ui:VisualElement>
+
+                    <ui:Label name="FactoryWageLabel" text="Oferowana Pensja: 300.00 USD/h" style="margin-bottom: 10px;" />
+                    <ui:VisualElement style="flex-direction: row;">
+                        <ui:Button name="RaiseFactoryWageBtn" text="Daj Podwyżkę (+10 USD)" style="padding: 8px 15px; margin-right: 10px; background-color: rgb(60, 90, 60);" />
+                        <ui:Button name="LowerFactoryWageBtn" text="Obetnij Pensję (-10 USD)" style="padding: 8px 15px; background-color: rgb(90, 60, 60);" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+
+        <!-- KONTROLA CZASU & PRZYCISK AWARYJNY -->
+        <ui:VisualElement style="flex-direction: row; justify-content: space-between; margin-top: 20px; border-top-width: 1px; border-top-color: rgb(80, 80, 80); padding-top: 10px;">
+            <ui:Button name="GlobalBackBtn" text="&lt; Wróć do Pulpitu (ESC)" style="padding: 10px 20px; background-color: rgb(150, 50, 50); display: none;" />
+            <ui:VisualElement style="flex-direction: row; flex-grow: 1; justify-content: flex-end;">
+                <ui:Button name="PauseBtn" text="Pauza (||)" style="margin-right: 5px; padding: 10px;" />
+                <ui:Button name="Speed1Btn" text="Prędkość x1" style="margin-right: 5px; padding: 10px;" />
+                <ui:Button name="Speed3Btn" text="Prędkość x5" style="padding: 10px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
     </ui:VisualElement>
-    <ui:Button text="Kup Działkę krzem (100 000 USD)" name="BuySiliconPlotBtn" emoji-fallback-support="true" style="height: 24px; width: 120px; font-size: 7.5px; -unity-font-style: bold; position: absolute; top: 152px; left: 4px;"/>
-    <ui:VisualElement name="ScreenMarket" style="flex-grow: 1; width: 1920px; height: 1080px;">
-        <ui:Label text="Silos Krzemu: 0 / 100 t" name="SiliconLabel" style="position: absolute; top: 246px; left: 1px; font-size: 9px;"/>
-        <ui:Label text="Hałda Węgla: 0 / 500 t" name="CoalLabel" style="height: 28px; width: 102px; white-space: pre; -unity-text-align: middle-left; position: absolute; top: 186px; left: 0; font-size: 9px;"/>
-        <ui:Label text="Cena Krzemu: --- USD / t" name="SiliconMarketLabel" style="position: absolute; top: 162px; left: 489px;"/>
-        <ui:Label text="Cena Węgla: --- USD / t" name="CoalMarketLabel" style="position: absolute; top: 191px; left: 496px;"/>
-        <ui:Label text="Transport: Oczekiwanie." name="TruckLabel" style="position: absolute; top: 82px; left: 523px; font-size: 7px;"/>
-    </ui:VisualElement>
-    <ui:VisualElement name="ScreenFactory" style="flex-grow: 1; width: 1920px; height: 1080px;">
-        <ui:Label text="Magazyn Procesorów: 0 t" name="MicrochipLabel" style="position: absolute; top: 218px; left: 0; font-size: 9px; width: 110px;"/>
-        <ui:Label text="Fabryka: Nie wybudowano" name="FactoryStatusLabel" style="position: absolute; top: 106px; left: 492px; height: 28px; width: 165px;"/>
-        <ui:Label text="Cena Procesorów: --- USD" name="MicrochipMarketLabel" style="position: absolute; top: 222px; left: 481px;"/>
-        <ui:Button text="Wybuduj Fabrykę Procesorów (250 000 USD)" name="BuyFactoryBtn" style="font-size: 8px; height: 22px; width: 181px; position: absolute; top: 315px; left: 6px;"/>
-    </ui:VisualElement>
-    <ui:Button text="Fabryka nr 1" name="NavFactoryBtn" style="position: absolute; width: 94px; height: 34px; top: 7px; left: 232px; font-size: 9px; margin-top: 1px; margin-right: 1px; margin-bottom: 1px; margin-left: 1px; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0;"/>
-    <ui:Button text="Pulpit" name="NavDashboardBtn" style="position: absolute; width: 122px; height: 35px; font-size: 9px; top: 6px; left: 3px; visibility: visible; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; margin-top: 1px; margin-right: 1px; margin-bottom: 1px; margin-left: 1px;"/>
-    <ui:Button text="Rynek i Logistyka" name="NavMarketBtn" style="position: absolute; width: 99px; height: 35px; top: 6px; left: 129px; font-size: 9px; margin-top: 1px; margin-right: 1px; margin-bottom: 1px; margin-left: 1px; border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0;"/>
 </ui:UXML>
