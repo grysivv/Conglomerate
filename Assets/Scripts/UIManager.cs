@@ -195,12 +195,22 @@ public class UIManager : MonoBehaviour
 
         if (truckLabel != null && fleetManager != null)
         {
-            if (fleetManager.isEnRoute)
+            bool routeFound = false;
+            if (fleetManager.activeRoutes != null)
             {
-                int progressPercent = Mathf.RoundToInt(fleetManager.currentJourneyProgress * 100f);
-                truckLabel.text = $"Transport: W trasie ({progressPercent}%)";
+                foreach (var route in fleetManager.activeRoutes)
+                {
+                    if (route.isEnRoute)
+                    {
+                        int progressPercent = Mathf.RoundToInt(route.currentJourneyProgress * 100f);
+                        truckLabel.text = $"Transport: W trasie ({progressPercent}%)";
+                        routeFound = true;
+                        break;
+                    }
+                }
             }
-            else
+
+            if (!routeFound)
             {
                 truckLabel.text = "Transport: Oczekiwanie w bazie";
             }
