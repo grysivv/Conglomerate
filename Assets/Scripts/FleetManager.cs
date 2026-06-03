@@ -53,7 +53,11 @@ public class FleetManager : MonoBehaviour
         }
         else if (route.destinationType == DestinationType.Factory && route.destinationBuilding != null)
         {
-            route.destinationBuilding.AddLocalResource(route.resourceType, route.currentLoad);
+            var destInv = route.destinationBuilding.GetComponent<InventoryComponent>();
+            if (destInv != null)
+            {
+                destInv.AddResource(route.resourceType, route.currentLoad);
+            }
         }
 
         Debug.Log($"<b><color=#fbc02d>[LOGISTYKA]</color></b> Dostawa ukończona! {route.currentLoad}x {route.resourceType} do {route.destinationType}.");
@@ -73,10 +77,15 @@ public class FleetManager : MonoBehaviour
             if (route == null || route.isEnRoute) continue;
 
             int availableStock = 0;
+            InventoryComponent sourceInv = null;
 
             if (route.sourceBuilding != null)
             {
-                availableStock = route.sourceBuilding.GetLocalStock(route.resourceType);
+                sourceInv = route.sourceBuilding.GetComponent<InventoryComponent>();
+                if (sourceInv != null)
+                {
+                    availableStock = sourceInv.GetStock(route.resourceType);
+                }
             }
             else if (globalInventory != null)
             {
@@ -90,7 +99,9 @@ public class FleetManager : MonoBehaviour
                 // Check if destination has space
                 if (route.destinationType == DestinationType.Factory)
                 {
-                    if (route.destinationBuilding == null || route.destinationBuilding.GetLocalFreeSpace(route.resourceType) <= 0) continue; // no space or missing building
+                    if (route.destinationBuilding == null) continue; // missing building
+                    var destInv = route.destinationBuilding.GetComponent<InventoryComponent>();
+                    if (destInv == null || destInv.GetFreeSpace(route.resourceType) <= 0) continue; // no space
                 }
                 else if (route.destinationType == DestinationType.GlobalInventory)
                 {
@@ -100,9 +111,9 @@ public class FleetManager : MonoBehaviour
                 int amountToLoad = Mathf.Min(route.batchSize, availableStock);
 
                 bool loaded = false;
-                if (route.sourceBuilding != null)
+                if (sourceInv != null)
                 {
-                    loaded = route.sourceBuilding.RemoveLocalResource(route.resourceType, amountToLoad);
+                    loaded = sourceInv.RemoveResource(route.resourceType, amountToLoad);
                 }
                 else if (globalInventory != null)
                 {

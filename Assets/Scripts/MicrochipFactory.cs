@@ -1,22 +1,13 @@
-// MicrochipFactory.cs
 using UnityEngine;
-using System.Collections.Generic;
 
-public class MicrochipFactory : ProductionBuilding
+[RequireComponent(typeof(BuildingBase), typeof(InventoryComponent), typeof(ResourceManufacturer))]
+[RequireComponent(typeof(HumanResourcesComponent))]
+public class MicrochipFactory : MonoBehaviour
 {
-    protected override void Awake()
-    {
-        // KLUCZOWA POPRAWKA: Wymuszamy aktywację systemu HR dla tej konkretnej fabryki na starcie,
-        // żeby przyciski zatrudniania z UI mogły dodawać pracowników.
-        usesHR = true;
+    // The previous implementation inherited from ProductionBuilding.
+    // In the new Component-Driven Architecture, the actual manufacturing logic is handled by ResourceManufacturer,
+    // the inventory by InventoryComponent, HR by HumanResourcesComponent, and base state by BuildingBase.
 
-        base.Awake();
-    }
-
-    public void BuildFactory()
-    {
-        if (isBuilt) return;
-        isBuilt = true;
-        Debug.Log("<b><color=#9c27b0>[FABRYKA]</color></b> Fabryka procesorów gotowa do pracy! Czeka na inżynierów.");
-    }
+    // We can keep this class as an empty shell or specialized marker if needed,
+    // but the actual functionality has been moved to the modular components.
 }

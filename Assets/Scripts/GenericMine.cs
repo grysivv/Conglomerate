@@ -1,35 +1,15 @@
-// GenericMine.cs
 using UnityEngine;
 
-public class GenericMine : ProductionBuilding
+[RequireComponent(typeof(BuildingBase), typeof(InventoryComponent), typeof(ResourceExtractor))]
+public class GenericMine : MonoBehaviour
 {
-    [Header("Ustawienia Działki Kopalni")]
-    public bool hasPlotPurchased = false;
+    // The previous implementation inherited from ProductionBuilding.
+    // In the new Component-Driven Architecture, the actual extraction logic is handled by ResourceExtractor,
+    // the inventory by InventoryComponent, and base state by BuildingBase.
 
-    protected override void Awake()
-    {
-        // Kopalnia jest ekstraktorem zasobów
-        isExtractor = true;
-        base.Awake();
-    }
+    // We can keep this class as an empty shell or specialized marker if needed,
+    // but the actual functionality has been moved to the modular components.
 
-    protected override void HandleHourlyTick()
-    {
-        // Jeśli gracz nie kupił działki, kopalnia nic nie robi
-        if (!hasPlotPurchased) return;
-
-        base.HandleHourlyTick();
-    }
-
-    public void PurchasePlot(double cost, int initialDeposit)
-    {
-        if (hasPlotPurchased) return;
-
-        if (corporationManager != null)
-            corporationManager.cash -= cost;
-
-        hasPlotPurchased = true;
-        isBuilt = true;
-        remainingDeposit = initialDeposit;
-    }
+    // NOTE: Plot purchasing and deposit are now properties directly managed via ResourceExtractor/BuildingBase in UIManager.
+    // If you need custom initialization, it goes here.
 }
