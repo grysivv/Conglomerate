@@ -30,6 +30,7 @@ public class ProductionBuilding : MonoBehaviour
     public bool isExtractor = false;
     public ResourceType extractionType;
     public int remainingDeposit = 0;
+    public int baseExtractionRate = 5;
 
     [Header("Panel HR")]
     public bool usesHR = false;
@@ -147,7 +148,7 @@ public class ProductionBuilding : MonoBehaviour
     {
         if (remainingDeposit <= 0) return;
 
-        int outAmt = recipe != null ? recipe.outputAmount : 1; // Fallback to 1 if recipe missing
+        int outAmt = recipe != null ? recipe.outputAmount : baseExtractionRate;
 
         int freeSpace = GetLocalFreeSpace(extractionType);
         bool useGlobal = false;

@@ -32,10 +32,19 @@
             <ui:VisualElement name="ScreenMarket" style="flex-grow: 1; display: none;">
                 <ui:VisualElement style="flex-direction: row;">
                     <ui:VisualElement style="flex-grow: 1; background-color: rgb(45, 45, 45); padding: 15px; margin-right: 10px;">
-                        <ui:Label text="STAN MAGAZYNÓW" style="font-size: 18px; -unity-font-style: bold; margin-bottom: 10px;" />
-                        <ui:Label name="SiliconLabel" text="Silos Krzemu: 0 / 100 t" style="margin-bottom: 5px;" />
-                        <ui:Label name="CoalLabel" text="Hałda Węgla: 0 / 500 t" style="margin-bottom: 5px;" />
-                        <ui:Label name="MicrochipLabel" text="Magazyn Procesorów: 0 / 50 szt." />
+                        <ui:Label text="STAN MAGAZYNÓW (GLOBALNY)" style="font-size: 18px; -unity-font-style: bold; margin-bottom: 10px;" />
+                        <ui:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 5px;">
+                            <ui:Label name="SiliconLabel" text="Silos Krzemu: 0 / 100 t" style="flex-grow: 1;" />
+                            <ui:Button name="SellSiliconBtn" text="Sprzedaj 10t" style="padding: 5px 10px; background-color: rgb(50, 100, 50);" />
+                        </ui:VisualElement>
+                        <ui:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 5px;">
+                            <ui:Label name="CoalLabel" text="Hałda Węgla: 0 / 500 t" style="flex-grow: 1;" />
+                            <ui:Button name="SellCoalBtn" text="Sprzedaj 10t" style="padding: 5px 10px; background-color: rgb(50, 100, 50);" />
+                        </ui:VisualElement>
+                        <ui:VisualElement style="flex-direction: row; align-items: center;">
+                            <ui:Label name="MicrochipLabel" text="Magazyn Procesorów: 0 / 50 szt." style="flex-grow: 1;" />
+                            <ui:Button name="SellChipBtn" text="Sprzedaj 1szt" style="padding: 5px 10px; background-color: rgb(50, 100, 50);" />
+                        </ui:VisualElement>
                     </ui:VisualElement>
 
                     <ui:VisualElement style="flex-grow: 1; background-color: rgb(45, 45, 45); padding: 15px;">
@@ -48,10 +57,13 @@
                 
                 <ui:VisualElement style="background-color: rgb(45, 45, 45); padding: 15px; margin-top: 15px;">
                     <ui:Label text="ZARZĄDZANIE FLOTĄ (Kup Ciężarówkę - 5 000 USD)" style="font-size: 18px; -unity-font-style: bold; margin-bottom: 10px;" />
-                    <ui:VisualElement style="flex-direction: row; justify-content: space-between;">
-                        <ui:Button name="RouteSiliconBtn" text="+ Trasa: Krzem -> Rynek" style="padding: 10px; flex-grow: 1; margin-right: 5px; background-color: rgb(70, 70, 100);" />
-                        <ui:Button name="RouteCoalBtn" text="+ Trasa: Węgiel -> Rynek" style="padding: 10px; flex-grow: 1; margin-right: 5px; background-color: rgb(70, 70, 100);" />
-                        <ui:Button name="RouteChipBtn" text="+ Trasa: Procesory -> Rynek" style="padding: 10px; flex-grow: 1; background-color: rgb(100, 70, 100);" />
+                    <ui:VisualElement style="flex-direction: column;">
+                        <ui:Button name="RouteMineToGlobalSiliconBtn" text="[ Ciężarówka: Kopalnia Krzemu -&gt; Magazyn ]" style="padding: 10px; margin-bottom: 5px; background-color: rgb(70, 70, 100);" />
+                        <ui:Button name="RouteMineToFactorySiliconBtn" text="[ Ciężarówka: Kopalnia Krzemu -&gt; Fabryka ]" style="padding: 10px; margin-bottom: 5px; background-color: rgb(70, 70, 100);" />
+                        <ui:Button name="RouteMineToGlobalCoalBtn" text="[ Ciężarówka: Kopalnia Węgla -&gt; Magazyn ]" style="padding: 10px; margin-bottom: 5px; background-color: rgb(100, 70, 70);" />
+                        <ui:Button name="RouteGlobalToFactorySiliconBtn" text="[ Ciężarówka: Magazyn -&gt; Fabryka (Krzem) ]" style="padding: 10px; margin-bottom: 5px; background-color: rgb(70, 100, 70);" />
+                        <ui:Button name="RouteGlobalToFactoryCoalBtn" text="[ Ciężarówka: Magazyn -&gt; Fabryka (Węgiel) ]" style="padding: 10px; margin-bottom: 5px; background-color: rgb(70, 100, 70);" />
+                        <ui:Button name="RouteFactoryToGlobalChipBtn" text="[ Ciężarówka: Fabryka -&gt; Magazyn (Procesory) ]" style="padding: 10px; background-color: rgb(100, 70, 100);" />
                     </ui:VisualElement>
                     <ui:Label name="ActiveRoutesLabel" text="Zlecone trasy (Aktywne ciężarówki): 0" style="margin-top: 10px; color: rgb(200, 255, 200);" />
                 </ui:VisualElement>
@@ -63,6 +75,13 @@
                 <ui:VisualElement style="background-color: rgb(45, 45, 45); padding: 15px; margin-bottom: 15px;">
                     <ui:Label name="FactoryStatusLabel" text="Status: Nie wybudowano" style="margin-bottom: 10px;" />
                     <ui:Button name="BuyFactoryBtn" text="Wybuduj Fabrykę Procesorów (250 000 USD)" style="width: 350px; padding: 10px;" />
+
+                    <ui:VisualElement name="FactoryInventoryPanel" style="margin-top: 10px; border-top-width: 1px; border-top-color: rgb(80,80,80); padding-top: 10px; display: none;">
+                        <ui:Label text="Magazyn Lokalny (Na taśmie):" style="-unity-font-style: bold; margin-bottom: 5px;" />
+                        <ui:Label name="FactoryLocalSiliconLabel" text="Krzem: 0 / 50 t" style="margin-bottom: 2px;" />
+                        <ui:Label name="FactoryLocalCoalLabel" text="Węgiel: 0 / 50 t" style="margin-bottom: 2px;" />
+                        <ui:Label name="FactoryLocalChipLabel" text="Procesory: 0 / 50 szt." />
+                    </ui:VisualElement>
                 </ui:VisualElement>
 
                 <ui:VisualElement style="background-color: rgb(55, 45, 55); padding: 15px; border-width: 1px; border-color: rgb(100, 60, 100);">

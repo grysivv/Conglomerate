@@ -24,6 +24,7 @@ public class SiliconMine : ProductionBuilding
         if (corporationManager != null) corporationManager.cash -= cost;
 
         hasPlotPurchased = true;
+        isBuilt = true;
         remainingDeposit = initialDeposit;
     }
 }

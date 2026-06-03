@@ -2,9 +2,8 @@ using System;
 
 public enum DestinationType
 {
-    Market,
     Factory,
-    GlobalInventory // Added to match previous logic where it could go to global
+    GlobalInventory
 }
 
 [Serializable]
