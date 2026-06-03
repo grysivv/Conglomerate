@@ -1,24 +1,20 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:VisualElement name="MainContainer" style="flex-grow: 1; background-color: rgb(35, 35, 35); color: rgb(240, 240, 240); padding: 15px; font-size: 16px;">
         
-        <!-- PASEK GÓRNY (GLOBALNY) -->
         <ui:VisualElement style="flex-direction: row; justify-content: space-between; margin-bottom: 20px; border-bottom-width: 1px; border-bottom-color: rgb(80, 80, 80); padding-bottom: 10px;">
             <ui:Label name="TimeLabel" text="Dzień: 1 | Zegar: 08:00 (Poranek)" style="-unity-font-style: bold;" />
             <ui:Label name="TruckLabel" text="Transport: Oczekiwanie w bazie" style="-unity-font-style: italic; color: rgb(200, 200, 200);" />
             <ui:Label name="CashLabel" text="Fundusze: 1 000 000.00 USD" style="-unity-font-style: bold; color: rgb(133, 187, 101);" />
         </ui:VisualElement>
 
-        <!-- MENU NAWIGACJI -->
         <ui:VisualElement style="flex-direction: row; margin-bottom: 20px;">
             <ui:Button name="NavDashboardBtn" text="Pulpit Główny" style="margin-right: 10px; padding: 10px 20px; background-color: rgb(60, 60, 60);" />
             <ui:Button name="NavMarketBtn" text="Rynek i Logistyka" style="margin-right: 10px; padding: 10px 20px; background-color: rgb(60, 60, 60);" />
             <ui:Button name="NavFactoryBtn" text="Fabryka nr 1 (Przetwórstwo)" style="padding: 10px 20px; background-color: rgb(60, 60, 60);" />
         </ui:VisualElement>
 
-        <!-- KONTENERY EKRANÓW -->
         <ui:VisualElement style="flex-grow: 1;">
             
-            <!-- EKRAN 1: PULPIT -->
             <ui:VisualElement name="ScreenDashboard" style="flex-grow: 1; display: flex;">
                 <ui:Label text="ZARZĄDZANIE KOPALNIAMI" style="font-size: 20px; -unity-font-style: bold; margin-bottom: 15px; color: rgb(200, 200, 255);" />
                 
@@ -33,10 +29,8 @@
                 </ui:VisualElement>
             </ui:VisualElement>
 
-            <!-- EKRAN 2: RYNEK -->
             <ui:VisualElement name="ScreenMarket" style="flex-grow: 1; display: none;">
                 <ui:VisualElement style="flex-direction: row;">
-                    <!-- Sekcja Magazynów -->
                     <ui:VisualElement style="flex-grow: 1; background-color: rgb(45, 45, 45); padding: 15px; margin-right: 10px;">
                         <ui:Label text="STAN MAGAZYNÓW" style="font-size: 18px; -unity-font-style: bold; margin-bottom: 10px;" />
                         <ui:Label name="SiliconLabel" text="Silos Krzemu: 0 / 100 t" style="margin-bottom: 5px;" />
@@ -44,7 +38,6 @@
                         <ui:Label name="MicrochipLabel" text="Magazyn Procesorów: 0 / 50 szt." />
                     </ui:VisualElement>
 
-                    <!-- Sekcja Giełdy -->
                     <ui:VisualElement style="flex-grow: 1; background-color: rgb(45, 45, 45); padding: 15px;">
                         <ui:Label text="CENY RYNKOWE" style="font-size: 18px; -unity-font-style: bold; margin-bottom: 10px;" />
                         <ui:Label name="SiliconMarketLabel" text="Cena Krzemu: --- USD" style="margin-bottom: 5px;" />
@@ -52,9 +45,18 @@
                         <ui:Label name="MicrochipMarketLabel" text="Cena Procesorów: --- USD" />
                     </ui:VisualElement>
                 </ui:VisualElement>
+                
+                <ui:VisualElement style="background-color: rgb(45, 45, 45); padding: 15px; margin-top: 15px;">
+                    <ui:Label text="ZARZĄDZANIE FLOTĄ (Kup Ciężarówkę - 5 000 USD)" style="font-size: 18px; -unity-font-style: bold; margin-bottom: 10px;" />
+                    <ui:VisualElement style="flex-direction: row; justify-content: space-between;">
+                        <ui:Button name="RouteSiliconBtn" text="+ Trasa: Krzem -> Rynek" style="padding: 10px; flex-grow: 1; margin-right: 5px; background-color: rgb(70, 70, 100);" />
+                        <ui:Button name="RouteCoalBtn" text="+ Trasa: Węgiel -> Rynek" style="padding: 10px; flex-grow: 1; margin-right: 5px; background-color: rgb(70, 70, 100);" />
+                        <ui:Button name="RouteChipBtn" text="+ Trasa: Procesory -> Rynek" style="padding: 10px; flex-grow: 1; background-color: rgb(100, 70, 100);" />
+                    </ui:VisualElement>
+                    <ui:Label name="ActiveRoutesLabel" text="Zlecone trasy (Aktywne ciężarówki): 0" style="margin-top: 10px; color: rgb(200, 255, 200);" />
+                </ui:VisualElement>
             </ui:VisualElement>
 
-            <!-- EKRAN 3: FABRYKA I HR -->
             <ui:VisualElement name="ScreenFactory" style="flex-grow: 1; display: none;">
                 <ui:Label text="FABRYKA PROCESORÓW" style="font-size: 20px; -unity-font-style: bold; margin-bottom: 15px; color: rgb(255, 200, 200);" />
                 
@@ -63,16 +65,13 @@
                     <ui:Button name="BuyFactoryBtn" text="Wybuduj Fabrykę Procesorów (250 000 USD)" style="width: 350px; padding: 10px;" />
                 </ui:VisualElement>
 
-                <!-- Panel HR -->
                 <ui:VisualElement style="background-color: rgb(55, 45, 55); padding: 15px; border-width: 1px; border-color: rgb(100, 60, 100);">
                     <ui:Label text="DZIAŁ KADR (HR) - Inżynierowie" style="font-size: 18px; -unity-font-style: bold; margin-bottom: 15px;" />
-                    
                     <ui:Label name="FactoryHRLabel" text="Zatrudnienie: 0 / 5 | Efektywność: 0%" style="margin-bottom: 10px;" />
                     <ui:VisualElement style="flex-direction: row; margin-bottom: 15px;">
                         <ui:Button name="HireFactoryBtn" text="Zatrudnij (+1)" style="padding: 8px 15px; margin-right: 10px; background-color: rgb(60, 90, 60);" />
                         <ui:Button name="FireFactoryBtn" text="Zwolnij (-1)" style="padding: 8px 15px; background-color: rgb(90, 60, 60);" />
                     </ui:VisualElement>
-
                     <ui:Label name="FactoryWageLabel" text="Oferowana Pensja: 300.00 USD/h" style="margin-bottom: 10px;" />
                     <ui:VisualElement style="flex-direction: row;">
                         <ui:Button name="RaiseFactoryWageBtn" text="Daj Podwyżkę (+10 USD)" style="padding: 8px 15px; margin-right: 10px; background-color: rgb(60, 90, 60);" />
@@ -83,7 +82,6 @@
 
         </ui:VisualElement>
 
-        <!-- KONTROLA CZASU & PRZYCISK AWARYJNY -->
         <ui:VisualElement style="flex-direction: row; justify-content: space-between; margin-top: 20px; border-top-width: 1px; border-top-color: rgb(80, 80, 80); padding-top: 10px;">
             <ui:Button name="GlobalBackBtn" text="&lt; Wróć do Pulpitu (ESC)" style="padding: 10px 20px; background-color: rgb(150, 50, 50); display: none;" />
             <ui:VisualElement style="flex-direction: row; flex-grow: 1; justify-content: flex-end;">
