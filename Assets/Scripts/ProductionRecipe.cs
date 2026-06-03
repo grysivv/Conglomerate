@@ -1,6 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+[System.Serializable]
+public struct ResourceRequirement
+{
+    public ResourceType resource;
+    public int amount;
+}
+
 [CreateAssetMenu(fileName = "NewProductionRecipe", menuName = "Tycoon/Production Recipe")]
 public class ProductionRecipe : ScriptableObject
 {
