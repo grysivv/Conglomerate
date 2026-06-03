@@ -9,9 +9,9 @@ public enum DestinationType
 [Serializable]
 public class TransportRoute
 {
-    public ProductionBuilding sourceBuilding;
+    public BuildingBase sourceBuilding;
     public DestinationType destinationType;
-    public ProductionBuilding destinationBuilding;
+    public BuildingBase destinationBuilding;
     public ResourceType resourceType;
     public int batchSize = 20;
     public float transportDurationHours = 3.0f;

@@ -2,240 +2,270 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
 
+public enum ScreenType { Dashboard, Market, Factory }
+
 public class UIManager : MonoBehaviour
 {
-    [Header("Powiązania z menedżerami")]
+    [Header("Menedżerowie")]
     public TimeManager timeManager;
     public CorporationManager corporationManager;
     public GlobalInventoryManager globalInventory;
     public MarketManager marketManager;
     public FleetManager fleetManager;
-    public MicrochipFactory microchipFactory;
 
-    [Header("Powiązania z Kopalniami")]
-    public GenericMine siliconMine;
-    public GenericMine coalMine;
+    [Header("UI Document")]
+    public UIDocument uiDoc;
 
-    [Header("Koszty")]
+    [Header("Referencje do Kopalni")]
+    public ResourceExtractor siliconMine;
+    public ResourceExtractor coalMine;
+
+    [Header("Koszty i Złoża")]
     public double siliconPlotCost = 100000.00;
-    public int siliconDepositAmount = 500;
+    public int siliconDepositAmount = 10000;
     public double coalPlotCost = 50000.00;
-    public int coalDepositAmount = 1500;
+    public int coalDepositAmount = 25000;
+
+    [Header("Referencja do Fabryki")]
+    public BuildingBase factoryBase;
+    public ResourceManufacturer factoryManufacturer;
+    public InventoryComponent factoryInventory;
+    public HumanResourcesComponent factoryHR;
+
+    [Header("Koszty Fabryki")]
     public double factoryCost = 250000.00;
 
-    private VisualElement screenDashboard, screenMarket, screenFactory;
-    private Button navDashboardBtn, navMarketBtn, navFactoryBtn, globalBackBtn;
-    private Label timeLabel, cashLabel, truckLabel;
-    private Label siliconDepositLabel, coalDepositLabel;
-    private Button buySiliconPlotBtn, buyCoalPlotBtn;
-    private Label siliconLabel, coalLabel, microchipLabel, siliconMarketLabel, coalMarketLabel, microchipMarketLabel;
-    private Label factoryStatusLabel, factoryHRLabel, factoryWageLabel;
-    private Button buyFactoryBtn, hireFactoryBtn, fireFactoryBtn, raiseFactoryWageBtn, lowerFactoryWageBtn;
-    private Button pauseBtn, speed1Btn, speed3Btn;
+    // UI Elements
+    private Label timeLabel;
+    private Label cashLabel;
+    private Label truckLabel;
 
-    // Logistics Route Buttons
-    private Button routeMineToGlobalSiliconBtn, routeMineToFactorySiliconBtn, routeMineToGlobalCoalBtn;
-    private Button routeGlobalToFactorySiliconBtn, routeGlobalToFactoryCoalBtn, routeFactoryToGlobalChipBtn;
+    private Button navDashboardBtn;
+    private Button navMarketBtn;
+    private Button navFactoryBtn;
 
-    // Market Sell Buttons
-    private Button sellSiliconBtn, sellCoalBtn, sellChipBtn;
+    private VisualElement screenDashboard;
+    private VisualElement screenMarket;
+    private VisualElement screenFactory;
 
+    private Label siliconDepositLabel;
+    private Button buySiliconPlotBtn;
+    private Label coalDepositLabel;
+    private Button buyCoalPlotBtn;
+
+    private Label siliconLabel;
+    private Button sellSiliconBtn;
+    private Label coalLabel;
+    private Button sellCoalBtn;
+    private Label microchipLabel;
+    private Button sellChipBtn;
+
+    private Label siliconMarketLabel;
+    private Label coalMarketLabel;
+    private Label microchipMarketLabel;
+
+    private Button routeMineToGlobalSiliconBtn;
+    private Button routeMineToFactorySiliconBtn;
+    private Button routeMineToGlobalCoalBtn;
+    private Button routeGlobalToFactorySiliconBtn;
+    private Button routeGlobalToFactoryCoalBtn;
+    private Button routeFactoryToGlobalChipBtn;
     private Label activeRoutesLabel;
 
-    // Factory Local UI
+    private Label factoryStatusLabel;
+    private Button buyFactoryBtn;
     private VisualElement factoryInventoryPanel;
-    private Label factoryLocalSiliconLabel, factoryLocalCoalLabel, factoryLocalChipLabel;
+    private Label factoryLocalSiliconLabel;
+    private Label factoryLocalCoalLabel;
+    private Label factoryLocalChipLabel;
 
-    private enum ScreenType { Dashboard, Market, Factory }
+    private Label factoryHRLabel;
+    private Button hireFactoryBtn;
+    private Button fireFactoryBtn;
+    private Label factoryWageLabel;
+    private Button raiseFactoryWageBtn;
+    private Button lowerFactoryWageBtn;
+
+    private Button globalBackBtn;
+    private Button pauseBtn;
+    private Button speed1Btn;
+    private Button speed3Btn;
+
     private ScreenType currentScreen = ScreenType.Dashboard;
 
-    void OnEnable()
+    private void OnEnable()
     {
-        UIDocument uiDocument = GetComponent<UIDocument>();
-        if (uiDocument == null) return;
-        VisualElement root = uiDocument.rootVisualElement;
+        TimeManager.OnHourlyTick += RefreshHUD;
 
-        screenDashboard = root.Q<VisualElement>("ScreenDashboard");
-        screenMarket = root.Q<VisualElement>("ScreenMarket");
-        screenFactory = root.Q<VisualElement>("ScreenFactory");
+        if (uiDoc == null) return;
+        var root = uiDoc.rootVisualElement;
 
-        navDashboardBtn = root.Q<Button>("NavDashboardBtn");
-        navMarketBtn = root.Q<Button>("NavMarketBtn");
-        navFactoryBtn = root.Q<Button>("NavFactoryBtn");
-        globalBackBtn = root.Q<Button>("GlobalBackBtn");
-
-        navDashboardBtn?.RegisterCallback<ClickEvent>(OnNavDashboardClicked);
-        navMarketBtn?.RegisterCallback<ClickEvent>(OnNavMarketClicked);
-        navFactoryBtn?.RegisterCallback<ClickEvent>(OnNavFactoryClicked);
-        globalBackBtn?.RegisterCallback<ClickEvent>(OnGlobalBackClicked);
-
+        // Header
         timeLabel = root.Q<Label>("TimeLabel");
         cashLabel = root.Q<Label>("CashLabel");
         truckLabel = root.Q<Label>("TruckLabel");
 
-        siliconDepositLabel = root.Q<Label>("SiliconDepositLabel");
-        coalDepositLabel = root.Q<Label>("CoalDepositLabel");
+        // Nav
+        navDashboardBtn = root.Q<Button>("NavDashboardBtn");
+        navMarketBtn = root.Q<Button>("NavMarketBtn");
+        navFactoryBtn = root.Q<Button>("NavFactoryBtn");
 
+        navDashboardBtn?.RegisterCallback<ClickEvent>(ev => SwitchScreen(ScreenType.Dashboard));
+        navMarketBtn?.RegisterCallback<ClickEvent>(ev => SwitchScreen(ScreenType.Market));
+        navFactoryBtn?.RegisterCallback<ClickEvent>(ev => SwitchScreen(ScreenType.Factory));
+
+        // Screens
+        screenDashboard = root.Q<VisualElement>("ScreenDashboard");
+        screenMarket = root.Q<VisualElement>("ScreenMarket");
+        screenFactory = root.Q<VisualElement>("ScreenFactory");
+
+        // Dashboard
+        siliconDepositLabel = root.Q<Label>("SiliconDepositLabel");
         buySiliconPlotBtn = root.Q<Button>("BuySiliconPlotBtn");
         buySiliconPlotBtn?.RegisterCallback<ClickEvent>(OnBuySiliconPlotBtnClicked);
 
+        coalDepositLabel = root.Q<Label>("CoalDepositLabel");
         buyCoalPlotBtn = root.Q<Button>("BuyCoalPlotBtn");
         buyCoalPlotBtn?.RegisterCallback<ClickEvent>(OnBuyCoalPlotBtnClicked);
 
+        // Market
         siliconLabel = root.Q<Label>("SiliconLabel");
+        sellSiliconBtn = root.Q<Button>("SellSiliconBtn");
+        sellSiliconBtn?.RegisterCallback<ClickEvent>(ev => SellInstant(ResourceType.Silicon, 10));
+
         coalLabel = root.Q<Label>("CoalLabel");
+        sellCoalBtn = root.Q<Button>("SellCoalBtn");
+        sellCoalBtn?.RegisterCallback<ClickEvent>(ev => SellInstant(ResourceType.Coal, 20));
+
+        microchipLabel = root.Q<Label>("MicrochipLabel");
+        sellChipBtn = root.Q<Button>("SellChipBtn");
+        sellChipBtn?.RegisterCallback<ClickEvent>(ev => SellInstant(ResourceType.Microchip, 1));
+
         siliconMarketLabel = root.Q<Label>("SiliconMarketLabel");
         coalMarketLabel = root.Q<Label>("CoalMarketLabel");
-        microchipLabel = root.Q<Label>("MicrochipLabel");
         microchipMarketLabel = root.Q<Label>("MicrochipMarketLabel");
 
-        // UI Hookups for New Buttons
-        sellSiliconBtn = root.Q<Button>("SellSiliconBtn");
-        sellCoalBtn = root.Q<Button>("SellCoalBtn");
-        sellChipBtn = root.Q<Button>("SellChipBtn");
-
-        sellSiliconBtn?.RegisterCallback<ClickEvent>(OnSellSiliconBtnClicked);
-        sellCoalBtn?.RegisterCallback<ClickEvent>(OnSellCoalBtnClicked);
-        sellChipBtn?.RegisterCallback<ClickEvent>(OnSellChipBtnClicked);
-
+        // Fleet Routes
         routeMineToGlobalSiliconBtn = root.Q<Button>("RouteMineToGlobalSiliconBtn");
+        routeMineToGlobalSiliconBtn?.RegisterCallback<ClickEvent>(OnRouteMineToGlobalSiliconBtnClicked);
+
         routeMineToFactorySiliconBtn = root.Q<Button>("RouteMineToFactorySiliconBtn");
+        routeMineToFactorySiliconBtn?.RegisterCallback<ClickEvent>(OnRouteMineToFactorySiliconBtnClicked);
+
         routeMineToGlobalCoalBtn = root.Q<Button>("RouteMineToGlobalCoalBtn");
+        routeMineToGlobalCoalBtn?.RegisterCallback<ClickEvent>(OnRouteMineToGlobalCoalBtnClicked);
+
         routeGlobalToFactorySiliconBtn = root.Q<Button>("RouteGlobalToFactorySiliconBtn");
+        routeGlobalToFactorySiliconBtn?.RegisterCallback<ClickEvent>(OnRouteGlobalToFactorySiliconBtnClicked);
+
         routeGlobalToFactoryCoalBtn = root.Q<Button>("RouteGlobalToFactoryCoalBtn");
+        routeGlobalToFactoryCoalBtn?.RegisterCallback<ClickEvent>(OnRouteGlobalToFactoryCoalBtnClicked);
+
         routeFactoryToGlobalChipBtn = root.Q<Button>("RouteFactoryToGlobalChipBtn");
+        routeFactoryToGlobalChipBtn?.RegisterCallback<ClickEvent>(OnRouteFactoryToGlobalChipBtnClicked);
 
         activeRoutesLabel = root.Q<Label>("ActiveRoutesLabel");
 
-        routeMineToGlobalSiliconBtn?.RegisterCallback<ClickEvent>(OnRouteMineToGlobalSiliconBtnClicked);
-        routeMineToFactorySiliconBtn?.RegisterCallback<ClickEvent>(OnRouteMineToFactorySiliconBtnClicked);
-        routeMineToGlobalCoalBtn?.RegisterCallback<ClickEvent>(OnRouteMineToGlobalCoalBtnClicked);
-        routeGlobalToFactorySiliconBtn?.RegisterCallback<ClickEvent>(OnRouteGlobalToFactorySiliconBtnClicked);
-        routeGlobalToFactoryCoalBtn?.RegisterCallback<ClickEvent>(OnRouteGlobalToFactoryCoalBtnClicked);
-        routeFactoryToGlobalChipBtn?.RegisterCallback<ClickEvent>(OnRouteFactoryToGlobalChipBtnClicked);
+        // Factory
+        factoryStatusLabel = root.Q<Label>("FactoryStatusLabel");
+        buyFactoryBtn = root.Q<Button>("BuyFactoryBtn");
+        buyFactoryBtn?.RegisterCallback<ClickEvent>(OnBuyFactoryBtnClicked);
 
         factoryInventoryPanel = root.Q<VisualElement>("FactoryInventoryPanel");
         factoryLocalSiliconLabel = root.Q<Label>("FactoryLocalSiliconLabel");
         factoryLocalCoalLabel = root.Q<Label>("FactoryLocalCoalLabel");
         factoryLocalChipLabel = root.Q<Label>("FactoryLocalChipLabel");
 
-        factoryStatusLabel = root.Q<Label>("FactoryStatusLabel");
-        buyFactoryBtn = root.Q<Button>("BuyFactoryBtn");
-        buyFactoryBtn?.RegisterCallback<ClickEvent>(OnBuyFactoryBtnClicked);
-
         factoryHRLabel = root.Q<Label>("FactoryHRLabel");
-        factoryWageLabel = root.Q<Label>("FactoryWageLabel");
-
         hireFactoryBtn = root.Q<Button>("HireFactoryBtn");
         hireFactoryBtn?.RegisterCallback<ClickEvent>(OnHireFactoryBtnClicked);
+
         fireFactoryBtn = root.Q<Button>("FireFactoryBtn");
         fireFactoryBtn?.RegisterCallback<ClickEvent>(OnFireFactoryBtnClicked);
+
+        factoryWageLabel = root.Q<Label>("FactoryWageLabel");
         raiseFactoryWageBtn = root.Q<Button>("RaiseFactoryWageBtn");
         raiseFactoryWageBtn?.RegisterCallback<ClickEvent>(OnRaiseFactoryWageBtnClicked);
+
         lowerFactoryWageBtn = root.Q<Button>("LowerFactoryWageBtn");
         lowerFactoryWageBtn?.RegisterCallback<ClickEvent>(OnLowerFactoryWageBtnClicked);
 
+        // Footer Controls
+        globalBackBtn = root.Q<Button>("GlobalBackBtn");
+        globalBackBtn?.RegisterCallback<ClickEvent>(ev => SwitchScreen(ScreenType.Dashboard));
+
         pauseBtn = root.Q<Button>("PauseBtn");
         pauseBtn?.RegisterCallback<ClickEvent>(OnPauseBtnClicked);
+
         speed1Btn = root.Q<Button>("Speed1Btn");
         speed1Btn?.RegisterCallback<ClickEvent>(OnSpeed1BtnClicked);
+
         speed3Btn = root.Q<Button>("Speed3Btn");
         speed3Btn?.RegisterCallback<ClickEvent>(OnSpeed3BtnClicked);
 
-        TimeManager.OnHourlyTick += RefreshHUD;
         SwitchScreen(ScreenType.Dashboard);
-    }
-
-    void OnDisable()
-    {
-        navDashboardBtn?.UnregisterCallback<ClickEvent>(OnNavDashboardClicked);
-        navMarketBtn?.UnregisterCallback<ClickEvent>(OnNavMarketClicked);
-        navFactoryBtn?.UnregisterCallback<ClickEvent>(OnNavFactoryClicked);
-        globalBackBtn?.UnregisterCallback<ClickEvent>(OnGlobalBackClicked);
-
-        buySiliconPlotBtn?.UnregisterCallback<ClickEvent>(OnBuySiliconPlotBtnClicked);
-        buyCoalPlotBtn?.UnregisterCallback<ClickEvent>(OnBuyCoalPlotBtnClicked);
-
-        sellSiliconBtn?.UnregisterCallback<ClickEvent>(OnSellSiliconBtnClicked);
-        sellCoalBtn?.UnregisterCallback<ClickEvent>(OnSellCoalBtnClicked);
-        sellChipBtn?.UnregisterCallback<ClickEvent>(OnSellChipBtnClicked);
-
-        routeMineToGlobalSiliconBtn?.UnregisterCallback<ClickEvent>(OnRouteMineToGlobalSiliconBtnClicked);
-        routeMineToFactorySiliconBtn?.UnregisterCallback<ClickEvent>(OnRouteMineToFactorySiliconBtnClicked);
-        routeMineToGlobalCoalBtn?.UnregisterCallback<ClickEvent>(OnRouteMineToGlobalCoalBtnClicked);
-        routeGlobalToFactorySiliconBtn?.UnregisterCallback<ClickEvent>(OnRouteGlobalToFactorySiliconBtnClicked);
-        routeGlobalToFactoryCoalBtn?.UnregisterCallback<ClickEvent>(OnRouteGlobalToFactoryCoalBtnClicked);
-        routeFactoryToGlobalChipBtn?.UnregisterCallback<ClickEvent>(OnRouteFactoryToGlobalChipBtnClicked);
-
-        buyFactoryBtn?.UnregisterCallback<ClickEvent>(OnBuyFactoryBtnClicked);
-
-        hireFactoryBtn?.UnregisterCallback<ClickEvent>(OnHireFactoryBtnClicked);
-        fireFactoryBtn?.UnregisterCallback<ClickEvent>(OnFireFactoryBtnClicked);
-        raiseFactoryWageBtn?.UnregisterCallback<ClickEvent>(OnRaiseFactoryWageBtnClicked);
-        lowerFactoryWageBtn?.UnregisterCallback<ClickEvent>(OnLowerFactoryWageBtnClicked);
-
-        pauseBtn?.UnregisterCallback<ClickEvent>(OnPauseBtnClicked);
-        speed1Btn?.UnregisterCallback<ClickEvent>(OnSpeed1BtnClicked);
-        speed3Btn?.UnregisterCallback<ClickEvent>(OnSpeed3BtnClicked);
-
-        TimeManager.OnHourlyTick -= RefreshHUD;
-    }
-
-    void Start() { RefreshHUD(); }
-
-    void Update()
-    {
-        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame && currentScreen != ScreenType.Dashboard)
-        {
-            SwitchScreen(ScreenType.Dashboard);
-        }
-
-        if (truckLabel != null && fleetManager != null)
-        {
-            bool routeFound = false;
-            if (fleetManager.activeRoutes != null)
-            {
-                foreach (var route in fleetManager.activeRoutes)
-                {
-                    if (route != null && route.isEnRoute)
-                    {
-                        int progressPercent = Mathf.RoundToInt(route.currentJourneyProgress * 100f);
-                        truckLabel.text = $"Transport: {route.resourceType} ({progressPercent}%)";
-                        routeFound = true;
-                        break;
-                    }
-                }
-            }
-            if (!routeFound) truckLabel.text = "Transport: Oczekiwanie w bazie";
-        }
-
+        RefreshHUD();
         UpdateTextsDynamic();
     }
 
-    // Callbacks
-    private void OnNavDashboardClicked(ClickEvent ev) => SwitchScreen(ScreenType.Dashboard);
-    private void OnNavMarketClicked(ClickEvent ev) => SwitchScreen(ScreenType.Market);
-    private void OnNavFactoryClicked(ClickEvent ev) => SwitchScreen(ScreenType.Factory);
-    private void OnGlobalBackClicked(ClickEvent ev) => SwitchScreen(ScreenType.Dashboard);
+    private void OnDisable()
+    {
+        TimeManager.OnHourlyTick -= RefreshHUD;
+    }
+
+    private void Update()
+    {
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            SwitchScreen(ScreenType.Dashboard);
+        }
+        UpdateTextsDynamic();
+
+        if (truckLabel != null && fleetManager != null && fleetManager.activeRoutes != null)
+        {
+            if (fleetManager.activeRoutes.Count > 0)
+            {
+                TransportRoute active = null;
+                foreach (var r in fleetManager.activeRoutes)
+                {
+                    if (r.isEnRoute)
+                    {
+                        active = r;
+                        break;
+                    }
+                }
+
+                if (active != null)
+                {
+                    truckLabel.text = $"Transport: {active.resourceType} w drodze ({Mathf.RoundToInt(active.currentJourneyProgress * 100f)}%)";
+                }
+                else
+                {
+                    truckLabel.text = "Transport: Oczekuje na załadunek";
+                }
+            }
+            else
+            {
+                truckLabel.text = "Transport: Brak aktywnych tras";
+            }
+        }
+    }
+
     private void OnBuySiliconPlotBtnClicked(ClickEvent ev) => HandleBuySiliconPlot();
     private void OnBuyCoalPlotBtnClicked(ClickEvent ev) => HandleBuyCoalPlot();
 
-    private void OnSellSiliconBtnClicked(ClickEvent ev) => SellInstant(ResourceType.Silicon, 10);
-    private void OnSellCoalBtnClicked(ClickEvent ev) => SellInstant(ResourceType.Coal, 20); // Zmiana na 20t zgodnie z planem
-    private void OnSellChipBtnClicked(ClickEvent ev) => SellInstant(ResourceType.Microchip, 1);
-
-    private void OnRouteMineToGlobalSiliconBtnClicked(ClickEvent ev) => AddSpecificRoute(siliconMine, DestinationType.GlobalInventory, null, ResourceType.Silicon);
-    private void OnRouteMineToFactorySiliconBtnClicked(ClickEvent ev) => AddSpecificRoute(siliconMine, DestinationType.Factory, microchipFactory, ResourceType.Silicon);
-    private void OnRouteMineToGlobalCoalBtnClicked(ClickEvent ev) => AddSpecificRoute(coalMine, DestinationType.GlobalInventory, null, ResourceType.Coal);
-    private void OnRouteGlobalToFactorySiliconBtnClicked(ClickEvent ev) => AddSpecificRoute(null, DestinationType.Factory, microchipFactory, ResourceType.Silicon);
-    private void OnRouteGlobalToFactoryCoalBtnClicked(ClickEvent ev) => AddSpecificRoute(null, DestinationType.Factory, microchipFactory, ResourceType.Coal);
-    private void OnRouteFactoryToGlobalChipBtnClicked(ClickEvent ev) => AddSpecificRoute(microchipFactory, DestinationType.GlobalInventory, null, ResourceType.Microchip);
+    private void OnRouteMineToGlobalSiliconBtnClicked(ClickEvent ev) => AddSpecificRoute(siliconMine?.GetComponent<BuildingBase>(), DestinationType.GlobalInventory, null, ResourceType.Silicon);
+    private void OnRouteMineToFactorySiliconBtnClicked(ClickEvent ev) => AddSpecificRoute(siliconMine?.GetComponent<BuildingBase>(), DestinationType.Factory, factoryBase, ResourceType.Silicon);
+    private void OnRouteMineToGlobalCoalBtnClicked(ClickEvent ev) => AddSpecificRoute(coalMine?.GetComponent<BuildingBase>(), DestinationType.GlobalInventory, null, ResourceType.Coal);
+    private void OnRouteGlobalToFactorySiliconBtnClicked(ClickEvent ev) => AddSpecificRoute(null, DestinationType.Factory, factoryBase, ResourceType.Silicon);
+    private void OnRouteGlobalToFactoryCoalBtnClicked(ClickEvent ev) => AddSpecificRoute(null, DestinationType.Factory, factoryBase, ResourceType.Coal);
+    private void OnRouteFactoryToGlobalChipBtnClicked(ClickEvent ev) => AddSpecificRoute(factoryBase, DestinationType.GlobalInventory, null, ResourceType.Microchip);
 
     private void OnBuyFactoryBtnClicked(ClickEvent ev) => HandleBuyFactory();
-    private void OnHireFactoryBtnClicked(ClickEvent ev) { microchipFactory?.HireWorker(); RefreshHUD(); }
-    private void OnFireFactoryBtnClicked(ClickEvent ev) { microchipFactory?.FireWorker(); RefreshHUD(); }
-    private void OnRaiseFactoryWageBtnClicked(ClickEvent ev) { microchipFactory?.AdjustWage(10); RefreshHUD(); }
-    private void OnLowerFactoryWageBtnClicked(ClickEvent ev) { microchipFactory?.AdjustWage(-10); RefreshHUD(); }
+    private void OnHireFactoryBtnClicked(ClickEvent ev) { factoryHR?.HireWorker(); RefreshHUD(); }
+    private void OnFireFactoryBtnClicked(ClickEvent ev) { factoryHR?.FireWorker(); RefreshHUD(); }
+    private void OnRaiseFactoryWageBtnClicked(ClickEvent ev) { factoryHR?.AdjustWage(10); RefreshHUD(); }
+    private void OnLowerFactoryWageBtnClicked(ClickEvent ev) { factoryHR?.AdjustWage(-10); RefreshHUD(); }
 
     private void OnPauseBtnClicked(ClickEvent ev) => timeManager?.SetPause(true);
     private void OnSpeed1BtnClicked(ClickEvent ev) => timeManager?.SetSpeed(1.0f);
@@ -256,7 +286,7 @@ public class UIManager : MonoBehaviour
         if (targetScreen == ScreenType.Factory) { screenFactory.style.display = DisplayStyle.Flex; if (globalBackBtn != null) globalBackBtn.style.display = DisplayStyle.Flex; }
     }
 
-    private void AddSpecificRoute(ProductionBuilding source, DestinationType destType, ProductionBuilding dest, ResourceType resType)
+    private void AddSpecificRoute(BuildingBase source, DestinationType destType, BuildingBase dest, ResourceType resType)
     {
         if (fleetManager == null || corporationManager == null) return;
 
@@ -312,17 +342,20 @@ public class UIManager : MonoBehaviour
             if (coalMarketLabel != null) coalMarketLabel.text = $"Cena Węgla: {marketManager.GetCurrentPrice(ResourceType.Coal):F2} USD";
             if (microchipMarketLabel != null) microchipMarketLabel.text = $"Cena Procesorów: {marketManager.GetCurrentPrice(ResourceType.Microchip):F2} USD";
         }
-        if (microchipFactory != null)
+        if (factoryBase != null)
         {
-            if (factoryHRLabel != null) factoryHRLabel.text = $"Inżynierowie: {microchipFactory.currentWorkers} / {microchipFactory.maxWorkers} | Efektywność: {Mathf.RoundToInt(microchipFactory.laborEfficiency * 100f)}%";
-            if (factoryWageLabel != null) factoryWageLabel.text = $"Oferowana Pensja: {microchipFactory.currentSalary:F2} USD/h";
+            if (factoryHRLabel != null && factoryHR != null) factoryHRLabel.text = $"Inżynierowie: {factoryHR.currentWorkers} / {factoryHR.maxWorkers} | Efektywność: {Mathf.RoundToInt(factoryHR.laborEfficiency * 100f)}%";
+            if (factoryWageLabel != null && factoryHR != null) factoryWageLabel.text = $"Oferowana Pensja: {factoryHR.currentSalary:F2} USD/h";
 
-            if (microchipFactory.isBuilt)
+            if (factoryBase.isBuilt)
             {
                 if (factoryInventoryPanel != null) factoryInventoryPanel.style.display = DisplayStyle.Flex;
-                if (factoryLocalSiliconLabel != null) factoryLocalSiliconLabel.text = $"Krzem: {microchipFactory.GetLocalStock(ResourceType.Silicon)} / {microchipFactory.GetLocalCapacity(ResourceType.Silicon)} t";
-                if (factoryLocalCoalLabel != null) factoryLocalCoalLabel.text = $"Węgiel: {microchipFactory.GetLocalStock(ResourceType.Coal)} / {microchipFactory.GetLocalCapacity(ResourceType.Coal)} t";
-                if (factoryLocalChipLabel != null) factoryLocalChipLabel.text = $"Procesory: {microchipFactory.GetLocalStock(ResourceType.Microchip)} / {microchipFactory.GetLocalCapacity(ResourceType.Microchip)} szt.";
+                if (factoryInventory != null)
+                {
+                    if (factoryLocalSiliconLabel != null) factoryLocalSiliconLabel.text = $"Krzem: {factoryInventory.GetStock(ResourceType.Silicon)} / {factoryInventory.GetCapacity(ResourceType.Silicon)} t";
+                    if (factoryLocalCoalLabel != null) factoryLocalCoalLabel.text = $"Węgiel: {factoryInventory.GetStock(ResourceType.Coal)} / {factoryInventory.GetCapacity(ResourceType.Coal)} t";
+                    if (factoryLocalChipLabel != null) factoryLocalChipLabel.text = $"Procesory: {factoryInventory.GetStock(ResourceType.Microchip)} / {factoryInventory.GetCapacity(ResourceType.Microchip)} szt.";
+                }
             }
             else
             {
@@ -347,28 +380,33 @@ public class UIManager : MonoBehaviour
             if (!coalMine.hasPlotPurchased) { if (coalDepositLabel != null) coalDepositLabel.text = "Złoże Węgla: Brak dostępu"; if (buyCoalPlotBtn != null) buyCoalPlotBtn.style.display = DisplayStyle.Flex; }
             else { if (coalDepositLabel != null) coalDepositLabel.text = coalMine.remainingDeposit <= 0 ? "Złoże Węgla: WYCZERPANE" : $"Złoże Węgla: {coalMine.remainingDeposit} t"; if (buyCoalPlotBtn != null) buyCoalPlotBtn.style.display = DisplayStyle.None; }
         }
-        if (microchipFactory != null)
+        if (factoryBase != null)
         {
-            if (!microchipFactory.isBuilt) { if (factoryStatusLabel != null) factoryStatusLabel.text = "Fabryka: Nie wybudowano"; if (buyFactoryBtn != null) buyFactoryBtn.style.display = DisplayStyle.Flex; }
+            if (!factoryBase.isBuilt) { if (factoryStatusLabel != null) factoryStatusLabel.text = "Fabryka: Nie wybudowano"; if (buyFactoryBtn != null) buyFactoryBtn.style.display = DisplayStyle.Flex; }
             else
             {
                 if (buyFactoryBtn != null) buyFactoryBtn.style.display = DisplayStyle.None;
-                if (microchipFactory.currentWorkers <= 0) { if (factoryStatusLabel != null) factoryStatusLabel.text = "Fabryka: Brak pracowników! Przestój."; }
-                else if (microchipFactory.recipe == null) { if (factoryStatusLabel != null) factoryStatusLabel.text = "Fabryka: BŁĄD! Brak receptury (Dodaj w Edytorze)."; }
-                else if (microchipFactory.isProducing) { if (factoryStatusLabel != null) factoryStatusLabel.text = $"Fabryka: Produkcja ({microchipFactory.currentProductionTimer}/{microchipFactory.recipe.productionTimeHours}h)"; }
+                if (factoryHR != null && factoryHR.currentWorkers <= 0) { if (factoryStatusLabel != null) factoryStatusLabel.text = "Fabryka: Brak pracowników! Przestój."; }
+                else if (factoryManufacturer != null && factoryManufacturer.recipe == null) { if (factoryStatusLabel != null) factoryStatusLabel.text = "Fabryka: BŁĄD! Brak receptury (Dodaj w Edytorze)."; }
+                else if (factoryManufacturer != null && factoryManufacturer.isProducing) { if (factoryStatusLabel != null) factoryStatusLabel.text = $"Fabryka: Produkcja ({factoryManufacturer.currentProductionTimer}/{factoryManufacturer.recipe.productionTimeHours}h)"; }
                 else { if (factoryStatusLabel != null) factoryStatusLabel.text = "Fabryka: Oczekiwanie na surowce"; }
             }
         }
     }
 
-    // DODANE BRAKUJĄCE METODY OBSŁUGI INVESTYCJI
     private void HandleBuySiliconPlot()
     {
         if (siliconMine == null || corporationManager == null || siliconMine.hasPlotPurchased) return;
         if (corporationManager.cash >= siliconPlotCost)
         {
             corporationManager.cash -= siliconPlotCost;
-            siliconMine.PurchasePlot(siliconPlotCost, siliconDepositAmount);
+
+            siliconMine.hasPlotPurchased = true;
+            siliconMine.remainingDeposit = siliconDepositAmount;
+
+            var baseBuilding = siliconMine.GetComponent<BuildingBase>();
+            if (baseBuilding != null) baseBuilding.isBuilt = true;
+
             RefreshHUD();
         }
     }
@@ -379,18 +417,25 @@ public class UIManager : MonoBehaviour
         if (corporationManager.cash >= coalPlotCost)
         {
             corporationManager.cash -= coalPlotCost;
-            coalMine.PurchasePlot(coalPlotCost, coalDepositAmount);
+
+            coalMine.hasPlotPurchased = true;
+            coalMine.remainingDeposit = coalDepositAmount;
+
+            var baseBuilding = coalMine.GetComponent<BuildingBase>();
+            if (baseBuilding != null) baseBuilding.isBuilt = true;
+
             RefreshHUD();
         }
     }
 
     private void HandleBuyFactory()
     {
-        if (microchipFactory == null || corporationManager == null || microchipFactory.isBuilt) return;
+        if (factoryBase == null || corporationManager == null || factoryBase.isBuilt) return;
         if (corporationManager.cash >= factoryCost)
         {
             corporationManager.cash -= factoryCost;
-            microchipFactory.BuildFactory();
+            factoryBase.isBuilt = true;
+            Debug.Log("<b><color=#9c27b0>[FABRYKA]</color></b> Fabryka procesorów gotowa do pracy! Czeka na inżynierów.");
             RefreshHUD();
         }
     }
