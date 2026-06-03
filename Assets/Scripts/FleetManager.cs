@@ -1,4 +1,3 @@
-// FleetManager.cs
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -28,9 +27,11 @@ public class FleetManager : MonoBehaviour
         float timeScale = timeManager.GetCurrentSpeed();
         if (timeScale <= 0) return;
 
+        if (activeRoutes == null) return;
+
         foreach (var route in activeRoutes)
         {
-            if (!route.isEnRoute) continue;
+            if (route == null || !route.isEnRoute) continue;
 
             float realSecondsRequired = route.transportDurationHours * (1.0f / timeScale);
             route.currentJourneyProgress += Time.deltaTime / realSecondsRequired;
@@ -44,6 +45,8 @@ public class FleetManager : MonoBehaviour
 
     private void DeliverCargo(TransportRoute route)
     {
+        if (route == null) return;
+
         if (route.destinationType == DestinationType.GlobalInventory && globalInventory != null)
         {
             globalInventory.AddResource(route.resourceType, route.currentLoad);
@@ -63,10 +66,11 @@ public class FleetManager : MonoBehaviour
     private void CheckForDelivery()
     {
         if (corporationManager == null) return;
+        if (activeRoutes == null) return;
 
         foreach (var route in activeRoutes)
         {
-            if (route.isEnRoute) continue;
+            if (route == null || route.isEnRoute) continue;
 
             int availableStock = 0;
 
@@ -84,13 +88,13 @@ public class FleetManager : MonoBehaviour
             if (availableStock >= minBatch)
             {
                 // Check if destination has space
-                if (route.destinationType == DestinationType.Factory && route.destinationBuilding != null)
+                if (route.destinationType == DestinationType.Factory)
                 {
-                    if (route.destinationBuilding.GetLocalFreeSpace(route.resourceType) <= 0) continue; // no space
+                    if (route.destinationBuilding == null || route.destinationBuilding.GetLocalFreeSpace(route.resourceType) <= 0) continue; // no space or missing building
                 }
-                else if (route.destinationType == DestinationType.GlobalInventory && globalInventory != null)
+                else if (route.destinationType == DestinationType.GlobalInventory)
                 {
-                    if (globalInventory.GetFreeSpace(route.resourceType) <= 0) continue; // no space
+                    if (globalInventory == null || globalInventory.GetFreeSpace(route.resourceType) <= 0) continue; // no space
                 }
 
                 int amountToLoad = Mathf.Min(route.batchSize, availableStock);

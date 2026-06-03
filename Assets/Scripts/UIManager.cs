@@ -1,4 +1,3 @@
-// UIManager.cs
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
@@ -14,8 +13,8 @@ public class UIManager : MonoBehaviour
     public MicrochipFactory microchipFactory;
 
     [Header("Powiązania z Kopalniami")]
-    public SiliconMine siliconMine;
-    public CoalMine coalMine;
+    public GenericMine siliconMine;
+    public GenericMine coalMine;
 
     [Header("Koszty")]
     public double siliconPlotCost = 100000.00;
@@ -198,7 +197,7 @@ public class UIManager : MonoBehaviour
             {
                 foreach (var route in fleetManager.activeRoutes)
                 {
-                    if (route.isEnRoute)
+                    if (route != null && route.isEnRoute)
                     {
                         int progressPercent = Mathf.RoundToInt(route.currentJourneyProgress * 100f);
                         truckLabel.text = $"Transport: {route.resourceType} ({progressPercent}%)";
@@ -275,7 +274,11 @@ public class UIManager : MonoBehaviour
                 transportDurationHours = fleetManager.defaultTransportDurationHours,
                 fuelCostPerDelivery = fleetManager.defaultFuelCostPerDelivery
             };
-            fleetManager.activeRoutes.Add(newRoute);
+
+            if (fleetManager.activeRoutes != null)
+            {
+                fleetManager.activeRoutes.Add(newRoute);
+            }
             RefreshHUD();
         }
     }
@@ -326,7 +329,7 @@ public class UIManager : MonoBehaviour
                 if (factoryInventoryPanel != null) factoryInventoryPanel.style.display = DisplayStyle.None;
             }
         }
-        if (activeRoutesLabel != null && fleetManager != null)
+        if (activeRoutesLabel != null && fleetManager != null && fleetManager.activeRoutes != null)
         {
             activeRoutesLabel.text = $"Zlecone trasy (Aktywne ciężarówki): {fleetManager.activeRoutes.Count}";
         }
@@ -334,17 +337,17 @@ public class UIManager : MonoBehaviour
 
     private void UpdateTextsDynamic()
     {
-        if (siliconMine)
+        if (siliconMine != null)
         {
             if (!siliconMine.hasPlotPurchased) { if (siliconDepositLabel != null) siliconDepositLabel.text = "Złoże Krzemu: Brak dostępu"; if (buySiliconPlotBtn != null) buySiliconPlotBtn.style.display = DisplayStyle.Flex; }
             else { if (siliconDepositLabel != null) siliconDepositLabel.text = siliconMine.remainingDeposit <= 0 ? "Złoże Krzemu: WYCZERPANE" : $"Złoże Krzemu: {siliconMine.remainingDeposit} t"; if (buySiliconPlotBtn != null) buySiliconPlotBtn.style.display = DisplayStyle.None; }
         }
-        if (coalMine)
+        if (coalMine != null)
         {
             if (!coalMine.hasPlotPurchased) { if (coalDepositLabel != null) coalDepositLabel.text = "Złoże Węgla: Brak dostępu"; if (buyCoalPlotBtn != null) buyCoalPlotBtn.style.display = DisplayStyle.Flex; }
             else { if (coalDepositLabel != null) coalDepositLabel.text = coalMine.remainingDeposit <= 0 ? "Złoże Węgla: WYCZERPANE" : $"Złoże Węgla: {coalMine.remainingDeposit} t"; if (buyCoalPlotBtn != null) buyCoalPlotBtn.style.display = DisplayStyle.None; }
         }
-        if (microchipFactory)
+        if (microchipFactory != null)
         {
             if (!microchipFactory.isBuilt) { if (factoryStatusLabel != null) factoryStatusLabel.text = "Fabryka: Nie wybudowano"; if (buyFactoryBtn != null) buyFactoryBtn.style.display = DisplayStyle.Flex; }
             else
