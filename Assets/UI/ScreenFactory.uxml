@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="ScreenFactory" style="flex-grow: 1; display: none;">
+        <ui:Label text="FABRYKA PROCESORÓW" class="title-label color-pink" />
+
+        <ui:VisualElement class="panel-card" style="margin-bottom: 15px;">
+            <ui:Label name="FactoryStatusLabel" text="Status: Nie wybudowano" class="label-hud" style="margin-bottom: 10px;" />
+            <ui:Button name="BuyFactoryBtn" text="Wybuduj Fabrykę Procesorów (250 000 USD)" class="btn-base btn-primary btn-wide" style="width: 350px;" />
+
+            <ui:VisualElement name="FactoryInventoryPanel" style="margin-top: 10px; border-top-width: 1px; border-top-color: var(--color-border); padding-top: 10px; display: none;">
+                <ui:Label text="Magazyn Lokalny (Na taśmie):" style="-unity-font-style: bold; margin-bottom: 5px;" />
+                <ui:Label name="FactoryLocalSiliconLabel" text="Krzem: 0 / 50 t" class="label-hud" style="margin-bottom: 2px;" />
+                <ui:Label name="FactoryLocalCoalLabel" text="Węgiel: 0 / 50 t" class="label-hud" style="margin-bottom: 2px;" />
+                <ui:Label name="FactoryLocalChipLabel" text="Procesory: 0 / 50 szt." class="label-hud" style="margin-bottom: 0;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement class="panel-hr">
+            <ui:Label text="DZIAŁ KADR (HR) - Inżynierowie" class="subtitle-label" style="margin-bottom: 15px;" />
+            <ui:Label name="FactoryHRLabel" text="Zatrudnienie: 0 / 5 | Efektywność: 0%" class="label-hud" style="margin-bottom: 10px;" />
+            <ui:VisualElement style="flex-direction: row; margin-bottom: 15px;">
+                <ui:Button name="HireFactoryBtn" text="Zatrudnij (+1)" class="btn-base btn-hr-add" />
+                <ui:Button name="FireFactoryBtn" text="Zwolnij (-1)" class="btn-base btn-hr-remove" />
+            </ui:VisualElement>
+            <ui:Label name="FactoryWageLabel" text="Oferowana Pensja: 300.00 USD/h" class="label-hud" style="margin-bottom: 10px;" />
+            <ui:VisualElement style="flex-direction: row;">
+                <ui:Button name="RaiseFactoryWageBtn" text="Daj Podwyżkę (+10 USD)" class="btn-base btn-hr-add" />
+                <ui:Button name="LowerFactoryWageBtn" text="Obetnij Pensję (-10 USD)" class="btn-base btn-hr-remove" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

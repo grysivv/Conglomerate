@@ -1,114 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="GameHUD.uss" />
+    <Style src="GlobalStyle.uss" />
+    <ui:Template name="ScreenDashboard" src="ScreenDashboard.uxml" />
+    <ui:Template name="ScreenMarket" src="ScreenMarket.uxml" />
+    <ui:Template name="ScreenFactory" src="ScreenFactory.uxml" />
+
     <ui:VisualElement class="main-container">
         
+        <!-- Header -->
         <ui:VisualElement class="header-container">
             <ui:Label name="TimeLabel" text="Dzień: 1 | Zegar: 08:00 (Poranek)" style="-unity-font-style: bold;" />
             <ui:Label name="TruckLabel" text="Transport: Oczekiwanie w bazie" class="color-light" />
             <ui:Label name="CashLabel" text="Fundusze: 1 000 000.00 USD" class="color-cash" />
         </ui:VisualElement>
 
+        <!-- Navigation -->
         <ui:VisualElement style="flex-direction: row; margin-bottom: 20px;">
-            <ui:Button name="NavDashboardBtn" text="Pulpit Główny" class="btn-nav" />
-            <ui:Button name="NavMarketBtn" text="Rynek i Logistyka" class="btn-nav" />
-            <ui:Button name="NavFactoryBtn" text="Fabryka nr 1 (Przetwórstwo)" class="btn-nav" style="margin-right: 0;" />
+            <ui:Button name="NavDashboardBtn" text="Pulpit Główny" class="btn-base btn-nav" />
+            <ui:Button name="NavMarketBtn" text="Rynek i Logistyka" class="btn-base btn-nav" />
+            <ui:Button name="NavFactoryBtn" text="Fabryka nr 1 (Przetwórstwo)" class="btn-base btn-nav" style="margin-right: 0;" />
         </ui:VisualElement>
 
-        <ui:VisualElement style="flex-grow: 1;">
-            
-            <ui:VisualElement name="ScreenDashboard" style="flex-grow: 1; display: flex;">
-                <ui:Label text="ZARZĄDZANIE KOPALNIAMI" class="title-label color-blue" />
-                
-                <ui:VisualElement class="panel-container">
-                    <ui:Label name="SiliconDepositLabel" text="Złoże Krzemu: Brak dostępu" class="label-hud" style="margin-bottom: 10px;" />
-                    <ui:Button name="BuySiliconPlotBtn" text="Kup Działkę Krzemu (100 000 USD)" class="btn-action btn-wide" />
-                </ui:VisualElement>
-
-                <ui:VisualElement class="panel-container" style="margin-bottom: 0;">
-                    <ui:Label name="CoalDepositLabel" text="Złoże Węgla: Brak dostępu" class="label-hud" style="margin-bottom: 10px;" />
-                    <ui:Button name="BuyCoalPlotBtn" text="Kup Działkę Węgla (50 000 USD)" class="btn-action btn-wide" />
-                </ui:VisualElement>
-            </ui:VisualElement>
-
-            <ui:VisualElement name="ScreenMarket" style="flex-grow: 1; display: none;">
-                <ui:VisualElement style="flex-direction: row;">
-                    <ui:VisualElement class="panel-container" style="flex-grow: 1; margin-right: 10px; margin-bottom: 0;">
-                        <ui:Label text="STAN MAGAZYNÓW (GLOBALNY)" class="subtitle-label" />
-                        <ui:VisualElement class="row-align-center">
-                            <ui:Label name="SiliconLabel" text="Silos Krzemu: 0 / 100 t" style="flex-grow: 1;" />
-                            <ui:Button name="SellSiliconBtn" text="Sprzedaj 10t" class="btn-action btn-sell" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="row-align-center">
-                            <ui:Label name="CoalLabel" text="Hałda Węgla: 0 / 500 t" style="flex-grow: 1;" />
-                            <ui:Button name="SellCoalBtn" text="Sprzedaj 20t" class="btn-action btn-sell" />
-                        </ui:VisualElement>
-                        <ui:VisualElement class="row-align-center" style="margin-bottom: 0;">
-                            <ui:Label name="MicrochipLabel" text="Magazyn Procesorów: 0 / 50 szt." style="flex-grow: 1;" />
-                            <ui:Button name="SellChipBtn" text="Sprzedaj 1szt" class="btn-action btn-sell" />
-                        </ui:VisualElement>
-                    </ui:VisualElement>
-
-                    <ui:VisualElement class="panel-container" style="flex-grow: 1; margin-bottom: 0;">
-                        <ui:Label text="CENY RYNKOWE" class="subtitle-label" />
-                        <ui:Label name="SiliconMarketLabel" text="Cena Krzemu: --- USD" class="label-hud" />
-                        <ui:Label name="CoalMarketLabel" text="Cena Węgla: --- USD" class="label-hud" />
-                        <ui:Label name="MicrochipMarketLabel" text="Cena Procesorów: --- USD" class="label-hud" style="margin-bottom: 0;" />
-                    </ui:VisualElement>
-                </ui:VisualElement>
-                
-                <ui:VisualElement class="panel-container" style="margin-top: 15px; margin-bottom: 0;">
-                    <ui:Label text="ZARZĄDZANIE FLOTĄ (Kup Ciężarówkę - 5 000 USD)" class="subtitle-label" />
-                    <ui:VisualElement style="flex-direction: column;">
-                        <ui:Button name="RouteMineToGlobalSiliconBtn" text="[ Ciężarówka: Kopalnia Krzemu -&gt; Magazyn ]" class="btn-action btn-route-silicon" />
-                        <ui:Button name="RouteMineToFactorySiliconBtn" text="[ Ciężarówka: Kopalnia Krzemu -&gt; Fabryka ]" class="btn-action btn-route-silicon" />
-                        <ui:Button name="RouteMineToGlobalCoalBtn" text="[ Ciężarówka: Kopalnia Węgla -&gt; Magazyn ]" class="btn-action btn-route-coal" />
-                        <ui:Button name="RouteGlobalToFactorySiliconBtn" text="[ Ciężarówka: Magazyn -&gt; Fabryka (Krzem) ]" class="btn-action btn-route-factory-in" />
-                        <ui:Button name="RouteGlobalToFactoryCoalBtn" text="[ Ciężarówka: Magazyn -&gt; Fabryka (Węgiel) ]" class="btn-action btn-route-factory-in" />
-                        <ui:Button name="RouteFactoryToGlobalChipBtn" text="[ Ciężarówka: Fabryka -&gt; Magazyn (Procesory) ]" class="btn-action btn-route-factory-out" />
-                    </ui:VisualElement>
-                    <ui:Label name="ActiveRoutesLabel" text="Zlecone trasy (Aktywne ciężarówki): 0" class="color-green-light" style="margin-top: 10px;" />
-                </ui:VisualElement>
-            </ui:VisualElement>
-
-            <ui:VisualElement name="ScreenFactory" style="flex-grow: 1; display: none;">
-                <ui:Label text="FABRYKA PROCESORÓW" class="title-label color-pink" />
-                
-                <ui:VisualElement class="panel-container" style="margin-bottom: 15px;">
-                    <ui:Label name="FactoryStatusLabel" text="Status: Nie wybudowano" class="label-hud" style="margin-bottom: 10px;" />
-                    <ui:Button name="BuyFactoryBtn" text="Wybuduj Fabrykę Procesorów (250 000 USD)" class="btn-action btn-wide" style="width: 350px;" />
-
-                    <ui:VisualElement name="FactoryInventoryPanel" style="margin-top: 10px; border-top-width: 1px; border-top-color: rgb(80,80,80); padding-top: 10px; display: none;">
-                        <ui:Label text="Magazyn Lokalny (Na taśmie):" style="-unity-font-style: bold; margin-bottom: 5px;" />
-                        <ui:Label name="FactoryLocalSiliconLabel" text="Krzem: 0 / 50 t" class="label-hud" style="margin-bottom: 2px;" />
-                        <ui:Label name="FactoryLocalCoalLabel" text="Węgiel: 0 / 50 t" class="label-hud" style="margin-bottom: 2px;" />
-                        <ui:Label name="FactoryLocalChipLabel" text="Procesory: 0 / 50 szt." class="label-hud" style="margin-bottom: 0;" />
-                    </ui:VisualElement>
-                </ui:VisualElement>
-
-                <ui:VisualElement class="panel-hr">
-                    <ui:Label text="DZIAŁ KADR (HR) - Inżynierowie" class="subtitle-label" style="margin-bottom: 15px;" />
-                    <ui:Label name="FactoryHRLabel" text="Zatrudnienie: 0 / 5 | Efektywność: 0%" class="label-hud" style="margin-bottom: 10px;" />
-                    <ui:VisualElement style="flex-direction: row; margin-bottom: 15px;">
-                        <ui:Button name="HireFactoryBtn" text="Zatrudnij (+1)" class="btn-action btn-hr-add" />
-                        <ui:Button name="FireFactoryBtn" text="Zwolnij (-1)" class="btn-action btn-hr-remove" />
-                    </ui:VisualElement>
-                    <ui:Label name="FactoryWageLabel" text="Oferowana Pensja: 300.00 USD/h" class="label-hud" style="margin-bottom: 10px;" />
-                    <ui:VisualElement style="flex-direction: row;">
-                        <ui:Button name="RaiseFactoryWageBtn" text="Daj Podwyżkę (+10 USD)" class="btn-action btn-hr-add" />
-                        <ui:Button name="LowerFactoryWageBtn" text="Obetnij Pensję (-10 USD)" class="btn-action btn-hr-remove" />
-                    </ui:VisualElement>
-                </ui:VisualElement>
-            </ui:VisualElement>
-
+        <!-- Dynamic Content Area -->
+        <ui:VisualElement name="ContentArea" class="panel-content-area">
+            <!-- ScreenTemplates will be injected here or managed via standard UXML display toggle -->
+            <!-- We will embed them directly and toggle display to keep UIManager simple, like a Router -->
+            <ui:Instance template="ScreenDashboard" name="ScreenDashboardInstance" />
+            <ui:Instance template="ScreenMarket" name="ScreenMarketInstance" />
+            <ui:Instance template="ScreenFactory" name="ScreenFactoryInstance" />
         </ui:VisualElement>
 
+        <!-- Footer -->
         <ui:VisualElement class="footer-container">
-            <ui:Button name="GlobalBackBtn" text="&lt; Wróć do Pulpitu (ESC)" class="btn-action btn-back" />
+            <ui:Button name="GlobalBackBtn" text="&lt; Wróć do Pulpitu (ESC)" class="btn-base btn-back" />
             <ui:VisualElement style="flex-direction: row; flex-grow: 1; justify-content: flex-end;">
-                <ui:Button name="PauseBtn" text="Pauza (||)" class="btn-action btn-nav" style="padding: 10px; margin-right: 5px;" />
-                <ui:Button name="Speed1Btn" text="Prędkość x1" class="btn-action btn-nav" style="padding: 10px; margin-right: 5px;" />
-                <ui:Button name="Speed3Btn" text="Prędkość x5" class="btn-action btn-nav" style="padding: 10px; margin-right: 0;" />
+                <ui:Button name="PauseBtn" text="Pauza (||)" class="btn-base btn-nav" style="padding: 10px; margin-right: 5px;" />
+                <ui:Button name="Speed1Btn" text="Prędkość x1" class="btn-base btn-nav" style="padding: 10px; margin-right: 5px;" />
+                <ui:Button name="Speed3Btn" text="Prędkość x5" class="btn-base btn-nav" style="padding: 10px; margin-right: 0;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Modal Overlay System -->
+        <ui:VisualElement name="ModalOverlay" class="modal-overlay">
+            <ui:VisualElement class="modal-window">
+                <ui:Label name="ModalTitle" text="KRYZYS W FIRMIE!" class="title-label color-alert" />
+                <ui:Label name="ModalMessage" text="Wydarzył się wypadek. Wstrzymano produkcję." class="label-hud" style="white-space: normal; margin-bottom: 20px; text-align: center;" />
+                <ui:Button name="ModalCloseBtn" text="Rozumiem" class="btn-base btn-primary btn-wide" />
             </ui:VisualElement>
         </ui:VisualElement>
 
