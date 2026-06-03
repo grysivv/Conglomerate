@@ -21,14 +21,12 @@
     --color-btn-default: rgb(60, 60, 65);
     --color-btn-hover: rgb(80, 80, 85);
     --color-btn-active: rgb(100, 100, 105);
-
     --color-btn-sell: rgb(50, 100, 50);
     --color-btn-route-silicon: rgb(70, 70, 100);
     --color-btn-route-coal: rgb(100, 70, 70);
     --color-btn-route-factory: rgb(70, 100, 70);
 
     --color-btn-back: rgb(150, 50, 50);
-
     --border-radius-default: 8px;
     --border-radius-btn: 6px;
 
@@ -211,4 +209,37 @@
     padding: 25px;
     width: 400px;
     align-items: center;
+}
+
+/* NOWE KLASY NAPRAWCZE DLA ELEMENTÓW HUDU */
+.nav-row-layout { flex-direction: row; margin-bottom: 20px; }
+.btn-factory-nav-fix { margin-right: 0; }
+.time-label-bold { -unity-font-style: bold; }
+.footer-btn-row { flex-direction: row; flex-grow: 1; justify-content: flex-end; }
+.btn-time-control-fix { padding: 10px; margin-right: 5px; }
+.btn-time-control-last { padding: 10px; margin-right: 0; }
+.modal-message-layout { white-space: normal; margin-bottom: 20px; text-align: center; }
+
+/* NOWE KLASY NAPRAWCZE DLA SUBEKRANÓW */
+.flex-grow-1 { flex-grow: 1; }
+.display-flex { display: flex; }
+.display-none { display: none; }
+.flex-row { flex-direction: row; }
+.flex-col { flex-direction: column; }
+.mb-15 { margin-bottom: 15px; }
+.mb-10 { margin-bottom: 10px; }
+.mb-5 { margin-bottom: 5px; }
+.mb-2 { margin-bottom: 2px; }
+.mb-0 { margin-bottom: 0; }
+.mt-15 { margin-top: 15px; }
+.mt-10 { margin-top: 10px; }
+.mr-10 { margin-right: 10px; }
+.w-350 { width: 350px; }
+.text-bold { -unity-font-style: bold; }
+.factory-inv-panel {
+    margin-top: 10px;
+    border-top-width: 1px;
+    border-top-color: var(--color-border);
+    padding-top: 10px;
+    display: none;
 }

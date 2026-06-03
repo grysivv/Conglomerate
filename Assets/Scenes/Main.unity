@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &72461983
+--- !u!1 &142348125
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,200 +127,23 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 72461986}
-  - component: {fileID: 72461985}
-  - component: {fileID: 72461984}
-  - component: {fileID: 72461987}
-  - component: {fileID: 72461988}
-  - component: {fileID: 72461989}
-  - component: {fileID: 72461990}
-  - component: {fileID: 72461991}
+  - component: {fileID: 142348128}
+  - component: {fileID: 142348127}
+  - component: {fileID: 142348126}
   m_Layer: 0
-  m_Name: _GameManager
+  m_Name: UI_Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &72461984
+--- !u!114 &142348126
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 72461983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a65031858b6120e4d87a5f1000d3a530, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CorporationManager
-  cash: 1000000
-  baseHQMaintenanceCost: 500
---- !u!114 &72461985
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 72461983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c6bc7252336503449bc6bf346e706a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TimeManager
-  baseSecondsPerHour: 1
-  isPaused: 0
-  currentHour: 0
-  currentDay: 1
-  currentPhase: 0
---- !u!4 &72461986
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 72461983}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.89752, y: 0.56556, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &72461987
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 72461983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3631c73726da7f41a45b098f9a64801, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SiliconMine
-  timeManager: {fileID: 72461985}
-  corporationManager: {fileID: 72461984}
-  globalInventory: {fileID: 72461988}
-  resourceType: 0
-  hasPlotPurchased: 0
-  remainingDeposit: 0
-  isOperating: 1
-  totalResourceProduced: 0
-  baseHourlyEnergyConsumption: 40
-  hourlyLaborCost: 200
-  baseHourlyProduction: 5
---- !u!114 &72461988
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 72461983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 550752cbe5e96aa42a4452ccd310f1b7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GlobalInventoryManager
-  storageLimits:
-  - type: 0
-    maxCapacity: 100
-  - type: 1
-    maxCapacity: 500
---- !u!114 &72461989
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 72461983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3938e61001b19564bab82adefa2d0b19, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MarketManager
-  timeManager: {fileID: 72461985}
-  corporationManager: {fileID: 72461984}
-  basePrices:
-  - type: 0
-    basePricePerTon: 150
-  - type: 1
-    basePricePerTon: 45
---- !u!114 &72461990
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 72461983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60e0565562ac83946849e19f1eb7d768, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FleetManager
-  timeManager: {fileID: 72461985}
-  corporationManager: {fileID: 72461984}
-  globalInventory: {fileID: 72461988}
-  marketManager: {fileID: 72461989}
-  transportDurationHours: 3
-  truckCapacity: 20
-  fuelCostPerDelivery: 50
-  isEnRoute: 0
-  currentJourneyProgress: 0
---- !u!114 &72461991
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 72461983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed9cfc9962035f64a86f173f1eab7961, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MicrochipFactory
-  timeManager: {fileID: 72461985}
-  corporationManager: {fileID: 72461984}
-  globalInventory: {fileID: 72461988}
-  isBuilt: 1
-  isOperating: 1
-  currentWorkers: 0
-  maxWorkers: 5
-  currentSalary: 300
-  expectedSalary: 300
-  laborEfficiency: 0
-  siliconRequiredPerChip: 2
-  coalRequiredPerChip: 1
-  productionTimeHours: 4
-  baseHourlyMaintenanceCost: 200
-  isProducing: 0
-  currentProductionTimer: 1
---- !u!1 &378419998
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 378420001}
-  - component: {fileID: 378420000}
-  - component: {fileID: 378420002}
-  m_Layer: 5
-  m_Name: UIDocument
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &378420000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 378419998}
+  m_GameObject: {fileID: 142348125}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
@@ -337,47 +160,51 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
---- !u!4 &378420001
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 378419998}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &378420002
+--- !u!114 &142348127
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 378419998}
+  m_GameObject: {fileID: 142348125}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e23da6f1faefc154f81927a250e924aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
-  timeManager: {fileID: 72461985}
-  corporationManager: {fileID: 72461984}
-  globalInventory: {fileID: 72461988}
-  marketManager: {fileID: 72461989}
-  fleetManager: {fileID: 72461990}
-  microchipFactory: {fileID: 72461991}
-  siliconMine: {fileID: 72461987}
-  coalMine: {fileID: 1206827556}
+  timeManager: {fileID: 344709636}
+  corporationManager: {fileID: 344709635}
+  globalInventory: {fileID: 0}
+  marketManager: {fileID: 0}
+  fleetManager: {fileID: 0}
+  uiDoc: {fileID: 142348126}
+  siliconMine: {fileID: 0}
+  coalMine: {fileID: 0}
   siliconPlotCost: 100000
-  siliconDepositAmount: 500
+  siliconDepositAmount: 10000
   coalPlotCost: 50000
-  coalDepositAmount: 1500
+  coalDepositAmount: 25000
+  factoryBase: {fileID: 0}
+  factoryManufacturer: {fileID: 0}
+  factoryInventory: {fileID: 0}
+  factoryHR: {fileID: 0}
   factoryCost: 250000
---- !u!1 &1206827555
+--- !u!4 &142348128
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 142348125}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -6.85265, y: 1.72055, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &344709634
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -385,48 +212,57 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1206827557}
-  - component: {fileID: 1206827556}
+  - component: {fileID: 344709637}
+  - component: {fileID: 344709636}
+  - component: {fileID: 344709635}
   m_Layer: 0
-  m_Name: _CoalMineObject
+  m_Name: GameManagers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1206827556
+--- !u!114 &344709635
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1206827555}
+  m_GameObject: {fileID: 344709634}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3631c73726da7f41a45b098f9a64801, type: 3}
+  m_Script: {fileID: 11500000, guid: a65031858b6120e4d87a5f1000d3a530, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SiliconMine
-  timeManager: {fileID: 72461985}
-  corporationManager: {fileID: 72461984}
-  globalInventory: {fileID: 72461988}
-  resourceType: 1
-  hasPlotPurchased: 0
-  remainingDeposit: 0
-  isOperating: 1
-  totalResourceProduced: 0
-  baseHourlyEnergyConsumption: 40
-  hourlyLaborCost: 100
-  baseHourlyProduction: 15
---- !u!4 &1206827557
+  m_EditorClassIdentifier: Assembly-CSharp::CorporationManager
+  cash: 1000000
+  baseHQMaintenanceCost: 500
+--- !u!114 &344709636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 344709634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c6bc7252336503449bc6bf346e706a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TimeManager
+  baseSecondsPerHour: 1
+  isPaused: 0
+  currentHour: 0
+  currentDay: 1
+  currentPhase: 0
+--- !u!4 &344709637
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1206827555}
+  m_GameObject: {fileID: 344709634}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.89752, y: 0.56556, z: 0}
+  m_LocalPosition: {x: -6.85265, y: 1.72055, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -574,6 +410,5 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1628392210}
-  - {fileID: 72461986}
-  - {fileID: 1206827557}
-  - {fileID: 378420001}
+  - {fileID: 344709637}
+  - {fileID: 142348128}

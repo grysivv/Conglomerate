@@ -7,44 +7,37 @@
 
     <ui:VisualElement class="main-container">
         
-        <!-- Header -->
         <ui:VisualElement class="header-container">
-            <ui:Label name="TimeLabel" text="Dzień: 1 | Zegar: 08:00 (Poranek)" style="-unity-font-style: bold;" />
+            <ui:Label name="TimeLabel" text="Dzień: 1 | Zegar: 08:00 (Poranek)" class="time-label-bold" />
             <ui:Label name="TruckLabel" text="Transport: Oczekiwanie w bazie" class="color-light" />
             <ui:Label name="CashLabel" text="Fundusze: 1 000 000.00 USD" class="color-cash" />
         </ui:VisualElement>
 
-        <!-- Navigation -->
-        <ui:VisualElement style="flex-direction: row; margin-bottom: 20px;">
+        <ui:VisualElement class="nav-row-layout">
             <ui:Button name="NavDashboardBtn" text="Pulpit Główny" class="btn-base btn-nav" />
             <ui:Button name="NavMarketBtn" text="Rynek i Logistyka" class="btn-base btn-nav" />
-            <ui:Button name="NavFactoryBtn" text="Fabryka nr 1 (Przetwórstwo)" class="btn-base btn-nav" style="margin-right: 0;" />
+            <ui:Button name="NavFactoryBtn" text="Fabryka nr 1 (Przetwórstwo)" class="btn-base btn-nav btn-factory-nav-fix" />
         </ui:VisualElement>
 
-        <!-- Dynamic Content Area -->
         <ui:VisualElement name="ContentArea" class="panel-content-area">
-            <!-- ScreenTemplates will be injected here or managed via standard UXML display toggle -->
-            <!-- We will embed them directly and toggle display to keep UIManager simple, like a Router -->
             <ui:Instance template="ScreenDashboard" name="ScreenDashboardInstance" />
             <ui:Instance template="ScreenMarket" name="ScreenMarketInstance" />
             <ui:Instance template="ScreenFactory" name="ScreenFactoryInstance" />
         </ui:VisualElement>
 
-        <!-- Footer -->
         <ui:VisualElement class="footer-container">
             <ui:Button name="GlobalBackBtn" text="&lt; Wróć do Pulpitu (ESC)" class="btn-base btn-back" />
-            <ui:VisualElement style="flex-direction: row; flex-grow: 1; justify-content: flex-end;">
-                <ui:Button name="PauseBtn" text="Pauza (||)" class="btn-base btn-nav" style="padding: 10px; margin-right: 5px;" />
-                <ui:Button name="Speed1Btn" text="Prędkość x1" class="btn-base btn-nav" style="padding: 10px; margin-right: 5px;" />
-                <ui:Button name="Speed3Btn" text="Prędkość x5" class="btn-base btn-nav" style="padding: 10px; margin-right: 0;" />
+            <ui:VisualElement class="footer-btn-row">
+                <ui:Button name="PauseBtn" text="Pauza (||)" class="btn-base btn-nav btn-time-control-fix" />
+                <ui:Button name="Speed1Btn" text="Prędkość x1" class="btn-base btn-nav btn-time-control-fix" />
+                <ui:Button name="Speed3Btn" text="Prędkość x5" class="btn-base btn-nav btn-time-control-last" />
             </ui:VisualElement>
         </ui:VisualElement>
 
-        <!-- Modal Overlay System -->
         <ui:VisualElement name="ModalOverlay" class="modal-overlay">
             <ui:VisualElement class="modal-window">
                 <ui:Label name="ModalTitle" text="KRYZYS W FIRMIE!" class="title-label color-alert" />
-                <ui:Label name="ModalMessage" text="Wydarzył się wypadek. Wstrzymano produkcję." class="label-hud" style="white-space: normal; margin-bottom: 20px; text-align: center;" />
+                <ui:Label name="ModalMessage" text="Wydarzył się wypadek. Wstrzymano produkcję." class="label-hud modal-message-layout" />
                 <ui:Button name="ModalCloseBtn" text="Rozumiem" class="btn-base btn-primary btn-wide" />
             </ui:VisualElement>
         </ui:VisualElement>

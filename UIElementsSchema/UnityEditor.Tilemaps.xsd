@@ -49,7 +49,7 @@
       <xs:extension xmlns:q11="UnityEngine.UIElements" base="q11:BindableElementType">
         <xs:choice />
         <xs:attribute name="label" type="xs:string" />
-        <xs:attribute default="project://database/?fileID=0&amp;guid=&amp;type=0#Default Brush" name="value" type="xs:string" />
+        <xs:attribute default="project://database/?fileID=7433441132597879392&amp;guid=195bfc5bdb1daf24da0b5b03738c6568&amp;type=3#Default Brush" name="value" type="xs:string" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
