@@ -30,7 +30,7 @@ public class ProductionBuilding : MonoBehaviour
     public bool isExtractor = false;
     public ResourceType extractionType;
     public int remainingDeposit = 0;
-    public int baseExtractionRate = 5;
+    public int baseExtractionAmount = 5;
 
     [Header("Panel HR")]
     public bool usesHR = false;
@@ -60,6 +60,13 @@ public class ProductionBuilding : MonoBehaviour
         {
             localInventory[limit.type] = 0;
             localCapacities[limit.type] = limit.maxCapacity;
+        }
+
+        // Zabezpieczenie: kopalnie muszą posiadać lokalny magazyn na swój urobek (jeśli go nie zdefiniowano w inspektorze)
+        if (isExtractor && !localInventory.ContainsKey(extractionType))
+        {
+            localInventory[extractionType] = 0;
+            localCapacities[extractionType] = 500; // domyślny bufor kopalni na 500 jednostek
         }
     }
 
@@ -148,22 +155,15 @@ public class ProductionBuilding : MonoBehaviour
     {
         if (remainingDeposit <= 0) return;
 
-        int outAmt = recipe != null ? recipe.outputAmount : baseExtractionRate;
+        // Kopalnie nie wymagają receptury
+        int outAmt = recipe != null ? recipe.outputAmount : baseExtractionAmount;
 
+        // Kopalnia musi wydobywać DO MAGAZYNU LOKALNEGO, skąd ciężarówki to zabiorą
         int freeSpace = GetLocalFreeSpace(extractionType);
-        bool useGlobal = false;
-        if (!localInventory.ContainsKey(extractionType))
-        {
-            if (globalInventory != null)
-            {
-                freeSpace = globalInventory.GetFreeSpace(extractionType);
-                useGlobal = true;
-            }
-        }
 
         if (freeSpace <= 0)
         {
-            Debug.Log($"<b><color=#ef5350>[KOPALNIA]</color></b> Produkcja wstrzymana! Magazyn dla {extractionType} jest PEŁNY.");
+            Debug.Log($"<b><color=#ef5350>[KOPALNIA]</color></b> Produkcja wstrzymana! Lokalny magazyn kopalni dla {extractionType} jest PEŁNY.");
             return;
         }
 
@@ -174,14 +174,8 @@ public class ProductionBuilding : MonoBehaviour
 
         remainingDeposit -= actualProduction;
 
-        if (useGlobal)
-        {
-            globalInventory.AddResource(extractionType, actualProduction);
-        }
-        else
-        {
-            AddLocalResource(extractionType, actualProduction);
-        }
+        // Zawsze dodajemy do magazynu lokalnego w kopalni, by zachować logistykę opartą o ciężarówki
+        AddLocalResource(extractionType, actualProduction);
 
         totalResourceProduced += actualProduction;
 

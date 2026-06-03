@@ -15,7 +15,7 @@ public class UIManager : MonoBehaviour
 
     [Header("Powiązania z Kopalniami")]
     public SiliconMine siliconMine;
-    public SiliconMine coalMine;
+    public CoalMine coalMine;
 
     [Header("Koszty")]
     public double siliconPlotCost = 100000.00;
@@ -65,10 +65,10 @@ public class UIManager : MonoBehaviour
         navFactoryBtn = root.Q<Button>("NavFactoryBtn");
         globalBackBtn = root.Q<Button>("GlobalBackBtn");
 
-        navDashboardBtn?.RegisterCallback<ClickEvent>(ev => SwitchScreen(ScreenType.Dashboard));
-        navMarketBtn?.RegisterCallback<ClickEvent>(ev => SwitchScreen(ScreenType.Market));
-        navFactoryBtn?.RegisterCallback<ClickEvent>(ev => SwitchScreen(ScreenType.Factory));
-        globalBackBtn?.RegisterCallback<ClickEvent>(ev => SwitchScreen(ScreenType.Dashboard));
+        navDashboardBtn?.RegisterCallback<ClickEvent>(OnNavDashboardClicked);
+        navMarketBtn?.RegisterCallback<ClickEvent>(OnNavMarketClicked);
+        navFactoryBtn?.RegisterCallback<ClickEvent>(OnNavFactoryClicked);
+        globalBackBtn?.RegisterCallback<ClickEvent>(OnGlobalBackClicked);
 
         timeLabel = root.Q<Label>("TimeLabel");
         cashLabel = root.Q<Label>("CashLabel");
@@ -78,10 +78,10 @@ public class UIManager : MonoBehaviour
         coalDepositLabel = root.Q<Label>("CoalDepositLabel");
 
         buySiliconPlotBtn = root.Q<Button>("BuySiliconPlotBtn");
-        buySiliconPlotBtn?.RegisterCallback<ClickEvent>(ev => HandleBuySiliconPlot());
+        buySiliconPlotBtn?.RegisterCallback<ClickEvent>(OnBuySiliconPlotBtnClicked);
 
         buyCoalPlotBtn = root.Q<Button>("BuyCoalPlotBtn");
-        buyCoalPlotBtn?.RegisterCallback<ClickEvent>(ev => HandleBuyCoalPlot());
+        buyCoalPlotBtn?.RegisterCallback<ClickEvent>(OnBuyCoalPlotBtnClicked);
 
         siliconLabel = root.Q<Label>("SiliconLabel");
         coalLabel = root.Q<Label>("CoalLabel");
@@ -95,9 +95,9 @@ public class UIManager : MonoBehaviour
         sellCoalBtn = root.Q<Button>("SellCoalBtn");
         sellChipBtn = root.Q<Button>("SellChipBtn");
 
-        sellSiliconBtn?.RegisterCallback<ClickEvent>(ev => SellInstant(ResourceType.Silicon, 10));
-        sellCoalBtn?.RegisterCallback<ClickEvent>(ev => SellInstant(ResourceType.Coal, 10));
-        sellChipBtn?.RegisterCallback<ClickEvent>(ev => SellInstant(ResourceType.Microchip, 1));
+        sellSiliconBtn?.RegisterCallback<ClickEvent>(OnSellSiliconBtnClicked);
+        sellCoalBtn?.RegisterCallback<ClickEvent>(OnSellCoalBtnClicked);
+        sellChipBtn?.RegisterCallback<ClickEvent>(OnSellChipBtnClicked);
 
         routeMineToGlobalSiliconBtn = root.Q<Button>("RouteMineToGlobalSiliconBtn");
         routeMineToFactorySiliconBtn = root.Q<Button>("RouteMineToFactorySiliconBtn");
@@ -108,12 +108,12 @@ public class UIManager : MonoBehaviour
 
         activeRoutesLabel = root.Q<Label>("ActiveRoutesLabel");
 
-        routeMineToGlobalSiliconBtn?.RegisterCallback<ClickEvent>(ev => AddSpecificRoute(siliconMine, DestinationType.GlobalInventory, null, ResourceType.Silicon));
-        routeMineToFactorySiliconBtn?.RegisterCallback<ClickEvent>(ev => AddSpecificRoute(siliconMine, DestinationType.Factory, microchipFactory, ResourceType.Silicon));
-        routeMineToGlobalCoalBtn?.RegisterCallback<ClickEvent>(ev => AddSpecificRoute(coalMine, DestinationType.GlobalInventory, null, ResourceType.Coal));
-        routeGlobalToFactorySiliconBtn?.RegisterCallback<ClickEvent>(ev => AddSpecificRoute(null, DestinationType.Factory, microchipFactory, ResourceType.Silicon));
-        routeGlobalToFactoryCoalBtn?.RegisterCallback<ClickEvent>(ev => AddSpecificRoute(null, DestinationType.Factory, microchipFactory, ResourceType.Coal));
-        routeFactoryToGlobalChipBtn?.RegisterCallback<ClickEvent>(ev => AddSpecificRoute(microchipFactory, DestinationType.GlobalInventory, null, ResourceType.Microchip));
+        routeMineToGlobalSiliconBtn?.RegisterCallback<ClickEvent>(OnRouteMineToGlobalSiliconBtnClicked);
+        routeMineToFactorySiliconBtn?.RegisterCallback<ClickEvent>(OnRouteMineToFactorySiliconBtnClicked);
+        routeMineToGlobalCoalBtn?.RegisterCallback<ClickEvent>(OnRouteMineToGlobalCoalBtnClicked);
+        routeGlobalToFactorySiliconBtn?.RegisterCallback<ClickEvent>(OnRouteGlobalToFactorySiliconBtnClicked);
+        routeGlobalToFactoryCoalBtn?.RegisterCallback<ClickEvent>(OnRouteGlobalToFactoryCoalBtnClicked);
+        routeFactoryToGlobalChipBtn?.RegisterCallback<ClickEvent>(OnRouteFactoryToGlobalChipBtnClicked);
 
         factoryInventoryPanel = root.Q<VisualElement>("FactoryInventoryPanel");
         factoryLocalSiliconLabel = root.Q<Label>("FactoryLocalSiliconLabel");
@@ -122,25 +122,66 @@ public class UIManager : MonoBehaviour
 
         factoryStatusLabel = root.Q<Label>("FactoryStatusLabel");
         buyFactoryBtn = root.Q<Button>("BuyFactoryBtn");
-        buyFactoryBtn?.RegisterCallback<ClickEvent>(ev => HandleBuyFactory());
+        buyFactoryBtn?.RegisterCallback<ClickEvent>(OnBuyFactoryBtnClicked);
 
         factoryHRLabel = root.Q<Label>("FactoryHRLabel");
         factoryWageLabel = root.Q<Label>("FactoryWageLabel");
 
-        root.Q<Button>("HireFactoryBtn")?.RegisterCallback<ClickEvent>(ev => { microchipFactory?.HireWorker(); RefreshHUD(); });
-        root.Q<Button>("FireFactoryBtn")?.RegisterCallback<ClickEvent>(ev => { microchipFactory?.FireWorker(); RefreshHUD(); });
-        root.Q<Button>("RaiseFactoryWageBtn")?.RegisterCallback<ClickEvent>(ev => { microchipFactory?.AdjustWage(10); RefreshHUD(); });
-        root.Q<Button>("LowerFactoryWageBtn")?.RegisterCallback<ClickEvent>(ev => { microchipFactory?.AdjustWage(-10); RefreshHUD(); });
+        hireFactoryBtn = root.Q<Button>("HireFactoryBtn");
+        hireFactoryBtn?.RegisterCallback<ClickEvent>(OnHireFactoryBtnClicked);
+        fireFactoryBtn = root.Q<Button>("FireFactoryBtn");
+        fireFactoryBtn?.RegisterCallback<ClickEvent>(OnFireFactoryBtnClicked);
+        raiseFactoryWageBtn = root.Q<Button>("RaiseFactoryWageBtn");
+        raiseFactoryWageBtn?.RegisterCallback<ClickEvent>(OnRaiseFactoryWageBtnClicked);
+        lowerFactoryWageBtn = root.Q<Button>("LowerFactoryWageBtn");
+        lowerFactoryWageBtn?.RegisterCallback<ClickEvent>(OnLowerFactoryWageBtnClicked);
 
-        root.Q<Button>("PauseBtn")?.RegisterCallback<ClickEvent>(ev => timeManager?.SetPause(true));
-        root.Q<Button>("Speed1Btn")?.RegisterCallback<ClickEvent>(ev => timeManager?.SetSpeed(1.0f));
-        root.Q<Button>("Speed3Btn")?.RegisterCallback<ClickEvent>(ev => timeManager?.SetSpeed(5.0f));
+        pauseBtn = root.Q<Button>("PauseBtn");
+        pauseBtn?.RegisterCallback<ClickEvent>(OnPauseBtnClicked);
+        speed1Btn = root.Q<Button>("Speed1Btn");
+        speed1Btn?.RegisterCallback<ClickEvent>(OnSpeed1BtnClicked);
+        speed3Btn = root.Q<Button>("Speed3Btn");
+        speed3Btn?.RegisterCallback<ClickEvent>(OnSpeed3BtnClicked);
 
         TimeManager.OnHourlyTick += RefreshHUD;
         SwitchScreen(ScreenType.Dashboard);
     }
 
-    void OnDisable() { TimeManager.OnHourlyTick -= RefreshHUD; }
+    void OnDisable()
+    {
+        navDashboardBtn?.UnregisterCallback<ClickEvent>(OnNavDashboardClicked);
+        navMarketBtn?.UnregisterCallback<ClickEvent>(OnNavMarketClicked);
+        navFactoryBtn?.UnregisterCallback<ClickEvent>(OnNavFactoryClicked);
+        globalBackBtn?.UnregisterCallback<ClickEvent>(OnGlobalBackClicked);
+
+        buySiliconPlotBtn?.UnregisterCallback<ClickEvent>(OnBuySiliconPlotBtnClicked);
+        buyCoalPlotBtn?.UnregisterCallback<ClickEvent>(OnBuyCoalPlotBtnClicked);
+
+        sellSiliconBtn?.UnregisterCallback<ClickEvent>(OnSellSiliconBtnClicked);
+        sellCoalBtn?.UnregisterCallback<ClickEvent>(OnSellCoalBtnClicked);
+        sellChipBtn?.UnregisterCallback<ClickEvent>(OnSellChipBtnClicked);
+
+        routeMineToGlobalSiliconBtn?.UnregisterCallback<ClickEvent>(OnRouteMineToGlobalSiliconBtnClicked);
+        routeMineToFactorySiliconBtn?.UnregisterCallback<ClickEvent>(OnRouteMineToFactorySiliconBtnClicked);
+        routeMineToGlobalCoalBtn?.UnregisterCallback<ClickEvent>(OnRouteMineToGlobalCoalBtnClicked);
+        routeGlobalToFactorySiliconBtn?.UnregisterCallback<ClickEvent>(OnRouteGlobalToFactorySiliconBtnClicked);
+        routeGlobalToFactoryCoalBtn?.UnregisterCallback<ClickEvent>(OnRouteGlobalToFactoryCoalBtnClicked);
+        routeFactoryToGlobalChipBtn?.UnregisterCallback<ClickEvent>(OnRouteFactoryToGlobalChipBtnClicked);
+
+        buyFactoryBtn?.UnregisterCallback<ClickEvent>(OnBuyFactoryBtnClicked);
+
+        hireFactoryBtn?.UnregisterCallback<ClickEvent>(OnHireFactoryBtnClicked);
+        fireFactoryBtn?.UnregisterCallback<ClickEvent>(OnFireFactoryBtnClicked);
+        raiseFactoryWageBtn?.UnregisterCallback<ClickEvent>(OnRaiseFactoryWageBtnClicked);
+        lowerFactoryWageBtn?.UnregisterCallback<ClickEvent>(OnLowerFactoryWageBtnClicked);
+
+        pauseBtn?.UnregisterCallback<ClickEvent>(OnPauseBtnClicked);
+        speed1Btn?.UnregisterCallback<ClickEvent>(OnSpeed1BtnClicked);
+        speed3Btn?.UnregisterCallback<ClickEvent>(OnSpeed3BtnClicked);
+
+        TimeManager.OnHourlyTick -= RefreshHUD;
+    }
+
     void Start() { RefreshHUD(); }
 
     void Update()
@@ -171,6 +212,36 @@ public class UIManager : MonoBehaviour
 
         UpdateTextsDynamic();
     }
+
+    // Callbacks
+    private void OnNavDashboardClicked(ClickEvent ev) => SwitchScreen(ScreenType.Dashboard);
+    private void OnNavMarketClicked(ClickEvent ev) => SwitchScreen(ScreenType.Market);
+    private void OnNavFactoryClicked(ClickEvent ev) => SwitchScreen(ScreenType.Factory);
+    private void OnGlobalBackClicked(ClickEvent ev) => SwitchScreen(ScreenType.Dashboard);
+    private void OnBuySiliconPlotBtnClicked(ClickEvent ev) => HandleBuySiliconPlot();
+    private void OnBuyCoalPlotBtnClicked(ClickEvent ev) => HandleBuyCoalPlot();
+
+    private void OnSellSiliconBtnClicked(ClickEvent ev) => SellInstant(ResourceType.Silicon, 10);
+    private void OnSellCoalBtnClicked(ClickEvent ev) => SellInstant(ResourceType.Coal, 20); // Zmiana na 20t zgodnie z planem
+    private void OnSellChipBtnClicked(ClickEvent ev) => SellInstant(ResourceType.Microchip, 1);
+
+    private void OnRouteMineToGlobalSiliconBtnClicked(ClickEvent ev) => AddSpecificRoute(siliconMine, DestinationType.GlobalInventory, null, ResourceType.Silicon);
+    private void OnRouteMineToFactorySiliconBtnClicked(ClickEvent ev) => AddSpecificRoute(siliconMine, DestinationType.Factory, microchipFactory, ResourceType.Silicon);
+    private void OnRouteMineToGlobalCoalBtnClicked(ClickEvent ev) => AddSpecificRoute(coalMine, DestinationType.GlobalInventory, null, ResourceType.Coal);
+    private void OnRouteGlobalToFactorySiliconBtnClicked(ClickEvent ev) => AddSpecificRoute(null, DestinationType.Factory, microchipFactory, ResourceType.Silicon);
+    private void OnRouteGlobalToFactoryCoalBtnClicked(ClickEvent ev) => AddSpecificRoute(null, DestinationType.Factory, microchipFactory, ResourceType.Coal);
+    private void OnRouteFactoryToGlobalChipBtnClicked(ClickEvent ev) => AddSpecificRoute(microchipFactory, DestinationType.GlobalInventory, null, ResourceType.Microchip);
+
+    private void OnBuyFactoryBtnClicked(ClickEvent ev) => HandleBuyFactory();
+    private void OnHireFactoryBtnClicked(ClickEvent ev) { microchipFactory?.HireWorker(); RefreshHUD(); }
+    private void OnFireFactoryBtnClicked(ClickEvent ev) { microchipFactory?.FireWorker(); RefreshHUD(); }
+    private void OnRaiseFactoryWageBtnClicked(ClickEvent ev) { microchipFactory?.AdjustWage(10); RefreshHUD(); }
+    private void OnLowerFactoryWageBtnClicked(ClickEvent ev) { microchipFactory?.AdjustWage(-10); RefreshHUD(); }
+
+    private void OnPauseBtnClicked(ClickEvent ev) => timeManager?.SetPause(true);
+    private void OnSpeed1BtnClicked(ClickEvent ev) => timeManager?.SetSpeed(1.0f);
+    private void OnSpeed3BtnClicked(ClickEvent ev) => timeManager?.SetSpeed(5.0f);
+
 
     private void SwitchScreen(ScreenType targetScreen)
     {
