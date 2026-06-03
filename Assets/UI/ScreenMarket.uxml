@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="ScreenMarket" style="flex-grow: 1; display: none;">
+        <ui:VisualElement style="flex-direction: row;">
+            <ui:VisualElement class="panel-card" style="flex-grow: 1; margin-right: 10px; margin-bottom: 0;">
+                <ui:Label text="STAN MAGAZYNÓW (GLOBALNY)" class="subtitle-label" />
+                <ui:VisualElement class="row-align-center">
+                    <ui:Label name="SiliconLabel" text="Silos Krzemu: 0 / 100 t" style="flex-grow: 1;" />
+                    <ui:Button name="SellSiliconBtn" text="Sprzedaj 10t" class="btn-base btn-sell" />
+                </ui:VisualElement>
+                <ui:VisualElement class="row-align-center">
+                    <ui:Label name="CoalLabel" text="Hałda Węgla: 0 / 500 t" style="flex-grow: 1;" />
+                    <ui:Button name="SellCoalBtn" text="Sprzedaj 20t" class="btn-base btn-sell" />
+                </ui:VisualElement>
+                <ui:VisualElement class="row-align-center" style="margin-bottom: 0;">
+                    <ui:Label name="MicrochipLabel" text="Magazyn Procesorów: 0 / 50 szt." style="flex-grow: 1;" />
+                    <ui:Button name="SellChipBtn" text="Sprzedaj 1szt" class="btn-base btn-sell" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement class="panel-card" style="flex-grow: 1; margin-bottom: 0;">
+                <ui:Label text="CENY RYNKOWE" class="subtitle-label" />
+                <ui:Label name="SiliconMarketLabel" text="Cena Krzemu: --- USD" class="label-hud" />
+                <ui:Label name="CoalMarketLabel" text="Cena Węgla: --- USD" class="label-hud" />
+                <ui:Label name="MicrochipMarketLabel" text="Cena Procesorów: --- USD" class="label-hud" style="margin-bottom: 0;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <ui:VisualElement class="panel-card" style="margin-top: 15px; margin-bottom: 0;">
+            <ui:Label text="ZARZĄDZANIE FLOTĄ (Kup Ciężarówkę - 5 000 USD)" class="subtitle-label" />
+            <ui:VisualElement style="flex-direction: column;">
+                <ui:Button name="RouteMineToGlobalSiliconBtn" text="[ Ciężarówka: Kopalnia Krzemu -&gt; Magazyn ]" class="btn-base btn-route-silicon" />
+                <ui:Button name="RouteMineToFactorySiliconBtn" text="[ Ciężarówka: Kopalnia Krzemu -&gt; Fabryka ]" class="btn-base btn-route-silicon" />
+                <ui:Button name="RouteMineToGlobalCoalBtn" text="[ Ciężarówka: Kopalnia Węgla -&gt; Magazyn ]" class="btn-base btn-route-coal" />
+                <ui:Button name="RouteGlobalToFactorySiliconBtn" text="[ Ciężarówka: Magazyn -&gt; Fabryka (Krzem) ]" class="btn-base btn-route-factory-in" />
+                <ui:Button name="RouteGlobalToFactoryCoalBtn" text="[ Ciężarówka: Magazyn -&gt; Fabryka (Węgiel) ]" class="btn-base btn-route-factory-in" />
+                <ui:Button name="RouteFactoryToGlobalChipBtn" text="[ Ciężarówka: Fabryka -&gt; Magazyn (Procesory) ]" class="btn-base btn-route-factory-out" />
+            </ui:VisualElement>
+            <ui:Label name="ActiveRoutesLabel" text="Zlecone trasy (Aktywne ciężarówki): 0" class="color-green-light" style="margin-top: 10px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

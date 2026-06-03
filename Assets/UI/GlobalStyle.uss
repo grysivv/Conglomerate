@@ -1,0 +1,214 @@
+:root {
+    /* Zmienne globalne - Dark Mode Business Theme */
+    --color-bg-main: rgb(30, 30, 32);
+    --color-bg-panel: rgb(40, 40, 45);
+    --color-bg-hr: rgb(45, 35, 45);
+    --color-bg-header: rgb(35, 35, 38);
+    --color-bg-footer: rgb(35, 35, 38);
+
+    --color-text-main: rgb(240, 240, 240);
+    --color-text-dim: rgb(170, 170, 170);
+    --color-text-highlight: rgb(130, 200, 130);
+    --color-text-alert: rgb(239, 83, 80);
+    --color-text-blue: rgb(150, 180, 255);
+    --color-text-pink: rgb(255, 150, 180);
+    --color-text-cash: rgb(133, 187, 101);
+
+    --color-border: rgb(80, 80, 85);
+    --color-border-hr: rgb(100, 60, 100);
+
+    /* Zmienne Przycisków */
+    --color-btn-default: rgb(60, 60, 65);
+    --color-btn-hover: rgb(80, 80, 85);
+    --color-btn-active: rgb(100, 100, 105);
+
+    --color-btn-sell: rgb(50, 100, 50);
+    --color-btn-route-silicon: rgb(70, 70, 100);
+    --color-btn-route-coal: rgb(100, 70, 70);
+    --color-btn-route-factory: rgb(70, 100, 70);
+
+    --color-btn-back: rgb(150, 50, 50);
+
+    --border-radius-default: 8px;
+    --border-radius-btn: 6px;
+
+    --font-size-title: 22px;
+    --font-size-subtitle: 18px;
+    --font-size-normal: 14px;
+}
+
+/* Struktura główna */
+.main-container {
+    flex-grow: 1;
+    background-color: var(--color-bg-main);
+    color: var(--color-text-main);
+    padding: 20px;
+    font-size: var(--font-size-normal);
+}
+
+.header-container {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: var(--color-bg-header);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--color-border);
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: var(--border-radius-default);
+}
+
+.footer-container {
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: var(--color-bg-footer);
+    margin-top: 20px;
+    border-top-width: 1px;
+    border-top-color: var(--color-border);
+    padding: 15px;
+    border-radius: var(--border-radius-default);
+}
+
+/* Panele */
+.panel-card {
+    background-color: var(--color-bg-panel);
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: var(--border-radius-default);
+    border-width: 1px;
+    border-color: var(--color-border);
+}
+
+.panel-hr {
+    background-color: var(--color-bg-hr);
+    padding: 15px;
+    border-width: 1px;
+    border-color: var(--color-border-hr);
+    border-radius: var(--border-radius-default);
+}
+
+.panel-content-area {
+    flex-grow: 1;
+}
+
+/* Teksty */
+.title-label {
+    font-size: var(--font-size-title);
+    -unity-font-style: bold;
+    margin-bottom: 15px;
+}
+
+.subtitle-label {
+    font-size: var(--font-size-subtitle);
+    -unity-font-style: bold;
+    margin-bottom: 10px;
+    color: var(--color-text-dim);
+}
+
+.label-hud {
+    margin-bottom: 5px;
+}
+
+/* Kolory tekstu specyficzne */
+.color-cash { color: var(--color-text-cash); -unity-font-style: bold; }
+.color-alert { color: var(--color-text-alert); }
+.color-light { color: var(--color-text-dim); -unity-font-style: italic; }
+.color-blue { color: var(--color-text-blue); }
+.color-pink { color: var(--color-text-pink); }
+.color-green-light { color: var(--color-text-highlight); }
+
+/* Przyciski podstawowe */
+.btn-base {
+    padding: 10px 15px;
+    border-radius: var(--border-radius-btn);
+    color: var(--color-text-main);
+    border-width: 0;
+    -unity-font-style: bold;
+    cursor: link;
+}
+
+.btn-nav {
+    margin-right: 10px;
+    background-color: var(--color-btn-default);
+    border-width: 1px;
+    border-color: var(--color-border);
+}
+.btn-nav:hover { background-color: var(--color-btn-hover); }
+.btn-nav:active { background-color: var(--color-btn-active); }
+.btn-nav.active { background-color: var(--color-text-highlight); color: var(--color-bg-main); }
+
+.btn-primary {
+    background-color: var(--color-text-blue);
+    color: var(--color-bg-main);
+    padding: 12px;
+}
+.btn-primary:hover { opacity: 0.9; }
+.btn-primary:active { opacity: 0.7; }
+
+.btn-wide {
+    width: 100%;
+}
+
+.btn-sell {
+    padding: 6px 12px;
+    background-color: var(--color-btn-sell);
+}
+.btn-sell:hover { opacity: 0.8; }
+.btn-sell:active { opacity: 0.6; }
+
+/* Przyciski Logistyki i HR */
+.btn-route-silicon { background-color: var(--color-btn-route-silicon); margin-bottom: 5px; padding: 10px; }
+.btn-route-coal { background-color: var(--color-btn-route-coal); margin-bottom: 5px; padding: 10px; }
+.btn-route-factory-in { background-color: var(--color-btn-route-factory); margin-bottom: 5px; padding: 10px; }
+.btn-route-factory-out { background-color: rgb(100, 70, 100); padding: 10px; margin-bottom: 5px; }
+
+.btn-hr-add { padding: 8px 15px; margin-right: 10px; background-color: var(--color-btn-route-factory); }
+.btn-hr-remove { padding: 8px 15px; background-color: var(--color-btn-route-coal); }
+
+/* Inne */
+.btn-back {
+    padding: 10px 20px;
+    background-color: var(--color-btn-back);
+    display: none;
+}
+
+.row-align-center {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.progress-bar {
+    height: 10px;
+    background-color: var(--color-bg-main);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 5px;
+}
+.progress-bar-fill {
+    height: 100%;
+    background-color: var(--color-text-highlight);
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(10, 10, 15, 0.8);
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+
+.modal-window {
+    background-color: var(--color-bg-panel);
+    border-width: 2px;
+    border-color: var(--color-border);
+    border-radius: var(--border-radius-default);
+    padding: 25px;
+    width: 400px;
+    align-items: center;
+}
