@@ -39,7 +39,7 @@
                         </ui:VisualElement>
                         <ui:VisualElement style="flex-direction: row; align-items: center; margin-bottom: 5px;">
                             <ui:Label name="CoalLabel" text="Hałda Węgla: 0 / 500 t" style="flex-grow: 1;" />
-                            <ui:Button name="SellCoalBtn" text="Sprzedaj 10t" style="padding: 5px 10px; background-color: rgb(50, 100, 50);" />
+                            <ui:Button name="SellCoalBtn" text="Sprzedaj 20t" style="padding: 5px 10px; background-color: rgb(50, 100, 50);" />
                         </ui:VisualElement>
                         <ui:VisualElement style="flex-direction: row; align-items: center;">
                             <ui:Label name="MicrochipLabel" text="Magazyn Procesorów: 0 / 50 szt." style="flex-grow: 1;" />
