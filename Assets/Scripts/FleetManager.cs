@@ -44,11 +44,7 @@ public class FleetManager : MonoBehaviour
 
     private void DeliverCargo(TransportRoute route)
     {
-        if (route.destinationType == DestinationType.Market && marketManager != null)
-        {
-            marketManager.SellResourceFromDelivery(route.resourceType, route.currentLoad);
-        }
-        else if (route.destinationType == DestinationType.GlobalInventory && globalInventory != null)
+        if (route.destinationType == DestinationType.GlobalInventory && globalInventory != null)
         {
             globalInventory.AddResource(route.resourceType, route.currentLoad);
         }
@@ -87,7 +83,7 @@ public class FleetManager : MonoBehaviour
 
             if (availableStock >= minBatch)
             {
-                // Check if destination has space, unless it's market
+                // Check if destination has space
                 if (route.destinationType == DestinationType.Factory && route.destinationBuilding != null)
                 {
                     if (route.destinationBuilding.GetLocalFreeSpace(route.resourceType) <= 0) continue; // no space
