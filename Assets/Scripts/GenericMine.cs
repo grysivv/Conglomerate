@@ -1,18 +1,23 @@
+// GenericMine.cs
 using UnityEngine;
 
-public class SiliconMine : ProductionBuilding
+public class GenericMine : ProductionBuilding
 {
-    [Header("Specyficzne dla Silicon Mine")]
+    [Header("Ustawienia Działki Kopalni")]
     public bool hasPlotPurchased = false;
 
     protected override void Awake()
     {
+        // Kopalnia jest ekstraktorem zasobów
+        isExtractor = true;
         base.Awake();
     }
 
     protected override void HandleHourlyTick()
     {
+        // Jeśli gracz nie kupił działki, kopalnia nic nie robi
         if (!hasPlotPurchased) return;
+
         base.HandleHourlyTick();
     }
 
@@ -20,8 +25,8 @@ public class SiliconMine : ProductionBuilding
     {
         if (hasPlotPurchased) return;
 
-        // In a real scenario we'd deduct cost here
-        if (corporationManager != null) corporationManager.cash -= cost;
+        if (corporationManager != null)
+            corporationManager.cash -= cost;
 
         hasPlotPurchased = true;
         isBuilt = true;
