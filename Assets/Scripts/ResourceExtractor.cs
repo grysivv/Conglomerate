@@ -1,75 +1,71 @@
+// ResourceExtractor.cs
 using UnityEngine;
 
-[RequireComponent(typeof(InventoryComponent))]
 public class ResourceExtractor : MonoBehaviour
 {
     [Header("Ustawienia Złoża")]
-    public ResourceType extractionType;
+    public ResourceType resourceType;
     public int remainingDeposit = 0;
-    public int baseExtractionAmount = 5;
-
     public bool hasPlotPurchased = false;
 
-    private BuildingBase buildingBase;
-    private InventoryComponent inventory;
+    [Header("Wydajność i Magazyn lokalny")]
+    public int extractionRatePerHour = 10;
+    public int localInventory = 0;
+    public int maxLocalCapacity = 100;
 
-    // Total resource produced tracker for consistency with old behavior if needed
-    public int totalResourceProduced = 0;
+    [Header("Referencje")]
+    private GlobalInventoryManager globalInventory;
 
-    protected virtual void Awake()
+    void Start()
     {
-        buildingBase = GetComponent<BuildingBase>();
-        inventory = GetComponent<InventoryComponent>();
-
-        // Ensure the extraction type is tracked in inventory
-        if (inventory.GetCapacity(extractionType) == 0)
-        {
-            inventory.SetCapacity(extractionType, 500); // domyślny bufor kopalni
-        }
+        // Automatycznie szukamy menedżera magazynu na scenie, żeby kopalnia miała gdzie oddawać surowce
+        globalInventory = Object.FindFirstObjectByType<GlobalInventoryManager>();
     }
 
-    protected virtual void OnEnable()
+    void OnEnable()
     {
-        TimeManager.OnHourlyTick += HandleHourlyTick;
+        // ZAPISANIE SIĘ NA ZEGAR: Kopalnia zaczyna słuchać menedżera czasu
+        TimeManager.OnHourlyTick += HandleHourlyExtraction;
     }
 
-    protected virtual void OnDisable()
+    void OnDisable()
     {
-        TimeManager.OnHourlyTick -= HandleHourlyTick;
+        // WYPISANIE SIĘ Z ZEGARA: Czyszczenie referencji przy wyłączeniu obiektu
+        TimeManager.OnHourlyTick -= HandleHourlyExtraction;
     }
 
-    protected virtual void HandleHourlyTick()
+    private void HandleHourlyExtraction()
     {
-        if (buildingBase != null && (!buildingBase.isBuilt || !buildingBase.isOperating)) return;
+        // Warunek 1: Jeśli działka nie jest kupiona, kopalnia nic nie robi
         if (!hasPlotPurchased) return;
 
-        ProcessExtraction();
-    }
-
-    private void ProcessExtraction()
-    {
-        if (remainingDeposit <= 0) return;
-
-        int outAmt = baseExtractionAmount;
-
-        int freeSpace = inventory.GetFreeSpace(extractionType);
-
-        if (freeSpace <= 0)
+        // Warunek 2: Jeśli złoże się wyczerpało, zatrzymaj wydobycie
+        if (remainingDeposit <= 0)
         {
-            Debug.Log($"<b><color=#ef5350>[KOPALNIA]</color></b> Produkcja wstrzymana! Lokalny magazyn kopalni dla {extractionType} jest PEŁNY.");
+            remainingDeposit = 0;
             return;
         }
 
-        int actualProduction = Mathf.Min(outAmt, remainingDeposit);
-        actualProduction = Mathf.Min(actualProduction, freeSpace);
+        // Warunek 3: Jeśli lokalny kosz kopalni jest pełen, czekamy na ciężarówkę
+        if (localInventory >= maxLocalCapacity)
+        {
+            Debug.Log($"<color=#ff9800>[KOPALNIA]</color> Magazyn lokalny kopalni {resourceType} jest pełny! Wydobycie wstrzymane.");
+            return;
+        }
 
-        if (actualProduction <= 0) return;
+        // Obliczanie faktycznego wydobycia (zabezpieczenie, żeby nie wykopać więcej niż zostało w ziemi)
+        int amountToExtract = Mathf.Min(extractionRatePerHour, remainingDeposit);
 
-        remainingDeposit -= actualProduction;
+        // Zabezpieczenie przed przepełnieniem magazynu lokalnego
+        if (localInventory + amountToExtract > maxLocalCapacity)
+        {
+            amountToExtract = maxLocalCapacity - localInventory;
+        }
 
-        inventory.AddResource(extractionType, actualProduction);
-        totalResourceProduced += actualProduction;
+        // Aktualizacja wartości
+        remainingDeposit -= amountToExtract;
+        localInventory += amountToExtract;
 
-        Debug.Log($"<b><color=#00acc1>[KOPALNIA]</color></b> Wydobyto: +{actualProduction}t {extractionType}. Pozostałe złoże: {remainingDeposit}t.");
+        Debug.Log($"<color=#4caf50>[KOPALNIA]</color> Wydobyto {amountToExtract}t {resourceType}. W ziemi zostało: {remainingDeposit}t. W kopalni: {localInventory}t.");
     }
 }
