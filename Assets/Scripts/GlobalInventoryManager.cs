@@ -10,6 +10,41 @@ public class GlobalInventoryManager : MonoBehaviour
         inventory = GetComponent<InventoryComponent>();
     }
 
+    private void Start()
+    {
+        if (HQManager.Instance != null)
+        {
+            HQManager.Instance.OnUpgradesChanged += HandleUpgradesChanged;
+        }
+        ApplyStorageBonus();
+    }
+
+    private void OnDestroy()
+    {
+        if (HQManager.Instance != null)
+        {
+            HQManager.Instance.OnUpgradesChanged -= HandleUpgradesChanged;
+        }
+    }
+
+    private void HandleUpgradesChanged()
+    {
+        ApplyStorageBonus();
+    }
+
+    private void ApplyStorageBonus()
+    {
+        if (inventory == null) return;
+
+        int bonus = HQManager.Instance != null ? HQManager.Instance.GetGlobalStorageBonus() : 0;
+
+        foreach (var limit in inventory.storageLimits)
+        {
+            int newCapacity = limit.maxCapacity + bonus;
+            inventory.SetCapacity(limit.type, newCapacity);
+        }
+    }
+
     public int GetStock(ResourceType type)
     {
         return inventory != null ? inventory.GetStock(type) : 0;
