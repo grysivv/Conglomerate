@@ -9,6 +9,7 @@ public class MarketManager : MonoBehaviour
     {
         public ResourceType type;
         public double basePricePerTon;
+        public int marketCapacity;
     }
 
     [Header("Powiązania systemowe")]
@@ -18,28 +19,18 @@ public class MarketManager : MonoBehaviour
     [Header("Cennik Bazowy Surowców")]
     public List<ResourceBasePrice> basePrices = new List<ResourceBasePrice>()
     {
-        new ResourceBasePrice { type = ResourceType.Silicon, basePricePerTon = 150.00 },
-        new ResourceBasePrice { type = ResourceType.Coal, basePricePerTon = 45.00 },
-        new ResourceBasePrice { type = ResourceType.Microchip, basePricePerTon = 1200.00 },
-        new ResourceBasePrice { type = ResourceType.Fuel, basePricePerTon = 80.00 }
+        new ResourceBasePrice { type = ResourceType.Silicon, basePricePerTon = 150.00, marketCapacity = 1000 },
+        new ResourceBasePrice { type = ResourceType.Coal, basePricePerTon = 45.00, marketCapacity = 2000 },
+        new ResourceBasePrice { type = ResourceType.Microchip, basePricePerTon = 1200.00, marketCapacity = 500 },
+        new ResourceBasePrice { type = ResourceType.Fuel, basePricePerTon = 80.00, marketCapacity = 1500 }
     };
-
-    [Header("Ustawienia Rynku Dynamicznego")]
-    public float saturationDecayRatePerHour = 0.05f; // Nasycenie spada o 5% co godzinę
 
     private Dictionary<ResourceType, double> currentPrices = new Dictionary<ResourceType, double>();
 
-    // Nasycenie rynku: 1.0 oznacza brak nasycenia (normalna cena).
-    // Wyższe nasycenie obniża cenę.
-    // Mniejsze nasycenie podwyższa cenę.
-    private Dictionary<ResourceType, float> marketSaturation = new Dictionary<ResourceType, float>();
+    private Dictionary<ResourceType, int> dailySupply = new Dictionary<ResourceType, int>();
 
     private void Start()
     {
-        foreach (var priceData in basePrices)
-        {
-            marketSaturation[priceData.type] = 1.0f;
-        }
         CalculatePrices();
     }
 
@@ -48,27 +39,14 @@ public class MarketManager : MonoBehaviour
 
     private void HandleHourlyMarket()
     {
-        DecaySaturation();
-        CalculatePrices();
-    }
-
-    private void DecaySaturation()
-    {
-        List<ResourceType> keys = new List<ResourceType>(marketSaturation.Keys);
-        foreach(var key in keys)
+        if (timeManager != null && timeManager.currentHour == 0)
         {
-            // Powrót do 1.0 (równowagi)
-            if (marketSaturation[key] > 1.0f)
+            foreach (var priceData in basePrices)
             {
-                marketSaturation[key] -= saturationDecayRatePerHour;
-                if (marketSaturation[key] < 1.0f) marketSaturation[key] = 1.0f;
-            }
-            else if (marketSaturation[key] < 1.0f)
-            {
-                marketSaturation[key] += saturationDecayRatePerHour;
-                if (marketSaturation[key] > 1.0f) marketSaturation[key] = 1.0f;
+                dailySupply[priceData.type] = 0;
             }
         }
+        CalculatePrices();
     }
 
     public double GetCurrentPrice(ResourceType type)
@@ -85,11 +63,10 @@ public class MarketManager : MonoBehaviour
         double totalEarnings = amount * price;
         corporationManager.cash += totalEarnings;
 
-        // Sprzedaż zwiększa nasycenie rynku (zmniejsza popyt, obniża cenę)
-        if (!marketSaturation.ContainsKey(type)) marketSaturation[type] = 1.0f;
-        marketSaturation[type] += amount * 0.02f; // np. 10 sztuk zwiększa nasycenie o 0.2 (20%)
+        if (!dailySupply.ContainsKey(type)) dailySupply[type] = 0;
+        dailySupply[type] += amount;
 
-        Debug.Log($"<b><color=#2e7d32>[RYNEK]</color></b> Sprzedano {amount}t/szt {type} za <b>{totalEarnings:F2} USD</b>. Nowe nasycenie: {marketSaturation[type]:F2}");
+        Debug.Log($"<b><color=#2e7d32>[RYNEK]</color></b> Sprzedano {amount}t/szt {type} za <b>{totalEarnings:F2} USD</b>. Nowe nasycenie: {GetSaturationPercentage(type) * 100f:F1}%");
 
         CalculatePrices(); // Aktualizacja cen po sprzedaży
     }
@@ -102,32 +79,43 @@ public class MarketManager : MonoBehaviour
 
         if (isPlayer && corporationManager != null) corporationManager.cash -= cost;
 
-        // Kupno zmniejsza nasycenie (zwiększa popyt, podnosi cenę)
-        if (!marketSaturation.ContainsKey(type)) marketSaturation[type] = 1.0f;
-        marketSaturation[type] -= amount * 0.02f;
-        if (marketSaturation[type] < 0.1f) marketSaturation[type] = 0.1f; // max 10x multiplier approximately
+        if (!dailySupply.ContainsKey(type)) dailySupply[type] = 0;
+        dailySupply[type] -= amount;
+        if (dailySupply[type] < 0) dailySupply[type] = 0;
 
         if (isPlayer)
         {
-            Debug.Log($"<b><color=#2e7d32>[RYNEK]</color></b> Gracz kupił {amount}t/szt {type} za <b>{cost:F2} USD</b>. Nowe nasycenie: {marketSaturation[type]:F2}");
+            Debug.Log($"<b><color=#2e7d32>[RYNEK]</color></b> Gracz kupił {amount}t/szt {type} za <b>{cost:F2} USD</b>. Nowe nasycenie: {GetSaturationPercentage(type) * 100f:F1}%");
         }
         else
         {
-            Debug.Log($"<b><color=#2e7d32>[RYNEK]</color></b> Inny podmiot kupił {amount}t/szt {type}. Nowe nasycenie: {marketSaturation[type]:F2}");
+            Debug.Log($"<b><color=#2e7d32>[RYNEK]</color></b> Inny podmiot kupił {amount}t/szt {type}. Nowe nasycenie: {GetSaturationPercentage(type) * 100f:F1}%");
         }
 
         CalculatePrices();
     }
 
     // Dodana metoda dla NPC, żeby nie modyfikować kasy gracza
-    public void NPCSellResource(object[] args)
+    public void NPCSellResource(ResourceType type, int amount)
     {
-        ResourceType type = (ResourceType)args[0];
-        int amount = (int)args[1];
-
-        if (!marketSaturation.ContainsKey(type)) marketSaturation[type] = 1.0f;
-        marketSaturation[type] += amount * 0.02f;
+        if (!dailySupply.ContainsKey(type)) dailySupply[type] = 0;
+        dailySupply[type] += amount;
         CalculatePrices();
+    }
+
+    public float GetSaturationPercentage(ResourceType type)
+    {
+        int supply = dailySupply.ContainsKey(type) ? dailySupply[type] : 0;
+        int capacity = 1;
+        foreach (var priceData in basePrices)
+        {
+            if (priceData.type == type)
+            {
+                capacity = priceData.marketCapacity > 0 ? priceData.marketCapacity : 1;
+                break;
+            }
+        }
+        return (float)supply / capacity;
     }
 
     private void CalculatePrices()
@@ -137,11 +125,9 @@ public class MarketManager : MonoBehaviour
 
         foreach (var priceData in basePrices)
         {
-            if (!marketSaturation.ContainsKey(priceData.type)) marketSaturation[priceData.type] = 1.0f;
-            float saturation = marketSaturation[priceData.type];
+            float saturation = GetSaturationPercentage(priceData.type);
 
-            // Cena to (Baza / Nasycenie) * Pora Dnia
-            currentPrices[priceData.type] = (priceData.basePricePerTon / saturation) * demandMultiplier;
+            currentPrices[priceData.type] = priceData.basePricePerTon * demandMultiplier * (1.0f - Mathf.Min(0.3f, saturation * 0.3f));
         }
     }
 }

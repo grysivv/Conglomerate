@@ -31,11 +31,6 @@ public class NPCCompany : MonoBehaviour
             }
             else
             {
-                if (marketManager.GetSaturationPercentage(targetResource) >= 0.8f)
-                {
-                    return;
-                }
-
                 // In a real scenario, an NPC company might have its own inventory or cash,
                 // but here we just simulate market forces by interacting with MarketManager directly.
                 // We'll add a simple sell method directly into MarketManager to represent NPC selling,
@@ -60,7 +55,7 @@ public class NPCCompany : MonoBehaviour
 
         if (marketManager != null)
         {
-            marketManager.NPCSellResource(targetResource, amount);
+            marketManager.SendMessage("NPCSellResource", new object[] { targetResource, amount }, SendMessageOptions.DontRequireReceiver);
             Debug.Log($"<b><color=#ef5350>[NPC]</color></b> {companyName} sprzedaje {amount}x {targetResource} na rynek.");
         }
     }
