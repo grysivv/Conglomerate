@@ -33,7 +33,10 @@ public class FleetManager : MonoBehaviour
         {
             if (route == null || !route.isEnRoute) continue;
 
-            float realSecondsRequired = route.transportDurationHours * (1.0f / timeScale);
+            float speedMultiplier = HQManager.Instance != null ? HQManager.Instance.GetFleetSpeedMultiplier() : 1.0f;
+            float actualDurationHours = route.transportDurationHours * speedMultiplier;
+
+            float realSecondsRequired = actualDurationHours * (1.0f / timeScale);
             route.currentJourneyProgress += Time.deltaTime / realSecondsRequired;
 
             if (route.currentJourneyProgress >= 1f)
@@ -108,7 +111,10 @@ public class FleetManager : MonoBehaviour
                     if (globalInventory == null || globalInventory.GetFreeSpace(route.resourceType) <= 0) continue; // no space
                 }
 
-                int amountToLoad = Mathf.Min(route.batchSize, availableStock);
+                int capacityBonus = HQManager.Instance != null ? HQManager.Instance.GetTruckCapacityBonus() : 0;
+                int currentBatchSize = route.batchSize + capacityBonus;
+
+                int amountToLoad = Mathf.Min(currentBatchSize, availableStock);
 
                 bool loaded = false;
                 if (sourceInv != null)
